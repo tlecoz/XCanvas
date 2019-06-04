@@ -1,0 +1,25 @@
+{
+
+"compileOnSave": true,
+
+  "compilerOptions": {
+
+    "module": "commonjs",
+    "target": "es6",
+    "sourceMap": true,
+    "outDir":"build"
+  },
+
+  "exclude": [
+    "node_modules",
+    "assets",
+    "lang",
+    "php",
+
+    "build",
+    ".vscode"
+  ],
+  "filesGlob":[
+    "./**/*.ts"
+  ]
+}

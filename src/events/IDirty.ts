@@ -1,0 +1,3 @@
+interface IDirty {
+  dirty:boolean;
+}
