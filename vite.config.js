@@ -2,7 +2,7 @@
 // vite.config.js
 
 
-/*
+
 
 //TO PUBLISH THE LIBRARY ITSELF : 
 
@@ -20,8 +20,9 @@ export default defineConfig({
     }
 })
 
-*/
 
+
+/*
 //TO PUBLISH A DEMO ON NETLIFY : 
 
 import { defineConfig } from 'vite';
@@ -38,4 +39,4 @@ export default defineConfig({
         },
     },
 });
-
+*/

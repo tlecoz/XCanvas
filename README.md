@@ -39,9 +39,7 @@ This stack-based approach enables precise control over the rendering order and t
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/tlecoz/XCanvas.git
-cd XCanvas
-npm install
+npm install xcanvas-ts
 ```
 
 ## Usage
