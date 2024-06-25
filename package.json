@@ -1,5 +1,5 @@
 {
-  "name": "xcanvas-vite",
+  "name": "xcanvas",
   "private": true,
   "version": "0.9.0",
   "type": "module",
@@ -15,7 +15,7 @@
     "vite-plugin-dts": "^3.9.1",
     "comment-json": "^4.2.3"
   },
-  "main": "dist/xcanvas-vite.js",
+  "main": "dist/xcanvas.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*.js",
