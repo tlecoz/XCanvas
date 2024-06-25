@@ -202,7 +202,7 @@ It's possible to save a renderStack as text file when everything is build
 (it can be usefull if you want to build an editor at the top of what you build)
 
 you can add this code at the end of the example :
-```
+```typescript
 setTimeout(() => {
     ObjectLibrary.instance.save();
     //it will generate and download a text file containing all the infos required to rebuild everything
@@ -211,7 +211,7 @@ setTimeout(() => {
 
 if you want to load the file and display its content, you can do it like that : 
 
-```
+```typescript
 import { ObjectLibrary } from "./utils/ObjectLibrary";
 import * as classes from "./index";
 ObjectLibrary.classes = classes;
