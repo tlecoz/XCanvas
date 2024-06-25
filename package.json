@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --config vite.config.npm.js",
+    "build": "tsc && vite build --config vite.config.netlify.js",
     "preview": "vite preview",
     "setup": "npx node SetupNpmLib.js",
     "publish:npm": "vite build --config vite.config.npm.js && npm publish --access public",
