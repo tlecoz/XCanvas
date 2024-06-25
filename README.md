@@ -35,9 +35,6 @@ export type RenderStackable = PathRenderable | TextRenderable | Path | TextPath 
 This stack-based approach enables precise control over the rendering order and the application of styles, making XCanvas a powerful tool for creating complex graphics.
 
 ## Installation
-
-Clone the repository and install dependencies:
-
 ```bash
 npm install xcanvas-ts
 ```
