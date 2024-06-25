@@ -8,8 +8,8 @@ export default defineConfig({
         minify: false,
         lib: {
             entry: 'src/index.ts',
-            name: 'xcanvas-vite',
-            fileName: 'xcanvas-vite',
+            name: 'xcanvas',
+            fileName: 'xcanvas',
         },
     }
 })
