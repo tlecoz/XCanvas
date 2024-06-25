@@ -239,7 +239,5 @@ Contributions are welcome! Please submit pull requests and report issues on GitH
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE.txt) file for details.
 
----
 
-Let XCanvas transform your graphic projects with its power and flexibility.
 
