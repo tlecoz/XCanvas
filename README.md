@@ -197,6 +197,7 @@ const stage = new Stage2D(window.innerWidth, window.innerHeight);
 ```
 You can show the result [HERE](https://xcanvas-ts.netlify.app/)
 
+Look at [index.ts](https://github.com/tlecoz/XCanvas/blob/master/src/index.ts) to see every classes available as component
 
 It's possible to save a renderStack as text file when everything is build 
 (it can be usefull if you want to build an editor at the top of what you build)
