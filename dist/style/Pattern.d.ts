@@ -1,0 +1,47 @@
+import { BitmapData } from '../bitmap/BitmapData';
+import { Display2D } from '../display/Display2D';
+import { Matrix2D } from '../geom/Matrix2D';
+import { FillStroke, Fillable } from './FillStroke';
+
+export declare class Pattern extends FillStroke {
+    protected source: BitmapData;
+    protected matrix: Matrix2D;
+    dirty: boolean;
+    protected dirtyMatrix: boolean;
+    protected patternCanvas: CanvasPattern;
+    protected canvas: CanvasImageSource;
+    protected center: boolean;
+    protected targetW: number;
+    protected targetH: number;
+    protected imageBmp: ImageBitmap;
+    protected rotationInDegree: number;
+    onImageLoaded: Function;
+    private _crop;
+    private _applyTargetScale;
+    constructor(source: BitmapData, crop?: boolean, applyTargetScale?: boolean);
+    get crop(): boolean;
+    set crop(b: boolean);
+    get applyTargetScale(): boolean;
+    set applyTargetScale(b: boolean);
+    clone(cloneMedia?: boolean, cloneLineStyle?: boolean, cloneTextStyle?: boolean, cloneTextLineStyle?: boolean): Pattern;
+    get mat(): Matrix2D;
+    get imageSource(): BitmapData | CanvasImageSource;
+    set bitmapData(n: BitmapData);
+    get centerInto(): boolean;
+    set centerInto(n: boolean);
+    get targetWidth(): number;
+    set targetWidth(n: number);
+    get targetHeight(): number;
+    set targetHeight(n: number);
+    get x(): number;
+    set x(n: number);
+    get y(): number;
+    set y(n: number);
+    get scaleX(): number;
+    set scaleX(n: number);
+    get scaleY(): number;
+    set scaleY(n: number);
+    get rotation(): number;
+    set rotation(n: number);
+    apply(context: CanvasRenderingContext2D, path: Fillable, target: Display2D): void;
+}

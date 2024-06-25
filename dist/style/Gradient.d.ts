@@ -1,0 +1,43 @@
+import { GradientColor } from '../color/GradientColor';
+import { Display2D } from '../display/Display2D';
+import { IDirty } from '../events/IDirty';
+import { FillStroke, Fillable } from './FillStroke';
+
+export declare class Gradient extends FillStroke implements IDirty {
+    protected _gradient: GradientColor;
+    protected _isLinear: boolean;
+    protected _x: number;
+    protected _y: number;
+    protected _scaleX: number;
+    protected _scaleY: number;
+    protected _rotation: number;
+    protected _radialFlareX: number;
+    protected _radialFlareY: number;
+    protected _radialFlareStrength: number;
+    dirty: boolean;
+    private _name;
+    protected gradientCanvas: CanvasGradient;
+    constructor(gradient: GradientColor, isLinear?: boolean);
+    clone(cloneGradient?: boolean, cloneColors?: boolean, cloneLineStyle?: boolean, cloneTextStyle?: boolean, cloneTextLineStyle?: boolean): Gradient;
+    get gradient(): GradientColor;
+    set gradient(n: GradientColor);
+    get isLinear(): boolean;
+    set isLinear(n: boolean);
+    get x(): number;
+    set x(n: number);
+    get y(): number;
+    set y(n: number);
+    get scaleX(): number;
+    set scaleX(n: number);
+    get scaleY(): number;
+    set scaleY(n: number);
+    get rotation(): number;
+    set rotation(n: number);
+    get radialFlareX(): number;
+    set radialFlareX(n: number);
+    get radialFlareY(): number;
+    set radialFlareY(n: number);
+    get radialFlareStrength(): number;
+    set radialFlareStrength(n: number);
+    apply(context: CanvasRenderingContext2D, path: Fillable, target: Display2D): void;
+}

@@ -8,7 +8,8 @@ export default defineConfig({
         lib: {
             entry: 'src/index.ts',
             name: 'xcanvas-ts',
-            fileName: 'xcanvas-ts',
+            fileName: format => `xcanvas-ts.${format}.js`,
+            formats: ['es', 'umd'],
         },
     }
 });

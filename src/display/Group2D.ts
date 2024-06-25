@@ -73,7 +73,7 @@ export class Group2D extends Display2D {
     this._children.splice(id, 1);
     this._numChildren--;
     element.parent = null;
-    this.setStage(null);
+    element.setStage(null);
     return element;
   }
 

@@ -14,11 +14,14 @@ export class Stage2D extends Group2D {
     super();
     this._stage = this;
     if (!Browser.canUseOffscreenCanvas) {
+
       this._canvas = document.createElement("canvas");
       this._output = this._canvas;
       this._output.style.position = "absolute";
       this._outputContext = this._output.getContext("2d");
+
     } else {
+
       this._canvas = new (window as any).OffscreenCanvas(w, h);
       this._output = document.createElement("canvas");
       this._output.style.position = "absolute";
@@ -66,6 +69,17 @@ export class Stage2D extends Group2D {
   public get globalScaleX(): number { return this.scaleX };
   public get globalScaleY(): number { return this.scaleY };
   public get globalRotation(): number { return this.rotation };
+
+
+  public clearElements(): void {
+    const len = this.numChildren;
+    for (let i = len - 1; i >= 0; i--) {
+      const child = this.children[i];
+      child.clearEvents();
+      this.removeChild(child);
+    }
+  }
+
 
   public drawElements(): void {
     this._canvas.width = this._canvas.width;
