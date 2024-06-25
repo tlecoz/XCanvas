@@ -1,3 +1,3 @@
-interface IDirty {
-  dirty:boolean;
+export interface IDirty {
+  dirty: boolean;
 }

@@ -1,4 +1,13 @@
-class App3 {
+import { SolidColor } from "./color/SolidColor";
+import { Display2D } from "./display/Display2D";
+import { Group2D } from "./display/Group2D";
+import { RenderStack } from "./display/RenderStack";
+import { Stage2D } from "./display/Stage2D";
+import { SquarePath } from "./graphics/primitives/SquarePath";
+import { SolidFill } from "./style/fills/SolidFill";
+import { ObjectLibrary } from "./utils/ObjectLibrary";
+
+export class App3 {
 
 
   /*
@@ -38,8 +47,8 @@ class App3 {
 
 
 
-  constructor(){
-    var stage = new Stage2D(800,600);
+  constructor() {
+    var stage = new Stage2D(800, 600);
 
 
     var c0 = new SolidColor(0xff0000);
@@ -47,7 +56,7 @@ class App3 {
     redQuad.push(SquarePath.instance);
     redQuad.push(new SolidFill(c0));
 
-    var mc = new Display2D(200,200,redQuad);
+    var mc = new Display2D(200, 200, redQuad);
     mc.x = mc.y = 100
 
     var group = new Group2D();

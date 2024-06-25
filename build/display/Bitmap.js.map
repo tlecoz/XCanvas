@@ -1,1 +1,0 @@
-{"version":3,"file":"Bitmap.js","sourceRoot":"","sources":["../../src/display/Bitmap.ts"],"names":[],"mappings":"AAAA,YAAa,SAAQ,SAAS;IAE5B,YAAY,EAAa;QACvB,KAAK,CAAC,EAAE,CAAC,KAAK,EAAC,EAAE,CAAC,MAAM,CAAC,CAAC;QAC1B,IAAI,CAAC,KAAK,CAAC,UAAU,CAAC,QAAQ,CAAC,CAAC;QAChC,IAAI,CAAC,KAAK,CAAA;IACZ,CAAC;CAGF"}

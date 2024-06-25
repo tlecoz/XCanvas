@@ -1,17 +1,19 @@
-class BorderLinePt {
+import { BorderPt } from "../BorderPt";
 
-  public p1:BorderPt;
-  public p2:BorderPt;
-  public id:number;
-  public d:number;
-  public a:number;
-  public x:number;
-  public y:number;
+export class BorderLinePt {
 
-  constructor(){
+  public p1: BorderPt;
+  public p2: BorderPt;
+  public id: number;
+  public d: number;
+  public a: number;
+  public x: number;
+  public y: number;
+
+  constructor() {
 
   }
-  public reset(){
+  public reset() {
     this.p1 = this.p2 = null;
     this.id = this.d = this.a = this.x = this.y = 0;
   }

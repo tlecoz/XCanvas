@@ -1,26 +1,35 @@
-class BitmapCache extends BitmapData {
+import { BitmapData } from "../bitmap/BitmapData";
+import { Path } from "../graphics/Path";
+import { FillStroke } from "../style/FillStroke";
+import { TextPath } from "../style/textstyles/TextPath";
+import { Display2D } from "./Display2D";
+import { PathRenderable, RenderStack, TextRenderable } from "./RenderStack";
+import { RenderStackElement } from "./RenderStackElement";
+import { Shape } from "./Shape";
 
-  protected target:Display2D;
-  protected renderStackElement:RenderStackElement;
-  public needsUpdate:boolean = false;
+export class BitmapCache extends BitmapData {
+
+  protected target: Display2D;
+  protected renderStackElement: RenderStackElement;
+  public needsUpdate: boolean = false;
 
 
-  constructor(target:Display2D,renderStackElement:RenderStackElement=null){
-    super(1,1);
+  constructor(target: Display2D, renderStackElement: RenderStackElement = null) {
+    super(1, 1);
     this.target = target;
     this.renderStackElement = renderStackElement;
 
   }
 
-  public draw(context:CanvasRenderingContext2D,offsetW:number,offsetH:number):void{
+  public draw(context: CanvasRenderingContext2D, offsetW: number, offsetH: number): void {
 
-    const target:Display2D = this.target;
+    const target: Display2D = this.target;
 
     context.save();
-    if(!this.renderStackElement) context.globalAlpha = target.realAlpha;
-    context.scale(1 / (this.width -offsetW*2) , 1 / (this.height -offsetH*2));
-    context.translate(-offsetW,-offsetH);
-    context.drawImage(this.canvas,0,0);
+    if (!this.renderStackElement) context.globalAlpha = target.globalAlpha;
+    context.scale(1 / (this.width - offsetW * 2), 1 / (this.height - offsetH * 2));
+    context.translate(-offsetW, -offsetH);
+    context.drawImage(this.canvas, 0, 0);
     context.restore();
 
   }
@@ -70,64 +79,64 @@ FillStroke / FilterStack / renderStack :
 
 
 
-  public updateCache(forceUpdate:boolean=false):void{
-    if(this.needsUpdate == true || forceUpdate){
+  public updateCache(forceUpdate: boolean = false): void {
+    if (this.needsUpdate == true || forceUpdate) {
       //console.log("updateCache")
-      const w:number = this.target.width * this.target.scaleX;
-      const h:number = this.target.height * this.target.scaleY;
-      const context:CanvasRenderingContext2D = this.context;
-      const target:Display2D = this.target;
+      const w: number = this.target.width * this.target.scaleX;
+      const h: number = this.target.height * this.target.scaleY;
+      const context: CanvasRenderingContext2D = this.context;
+      const target: Display2D = this.target;
 
-      if(this.renderStackElement){
+      if (this.renderStackElement) {
 
-        if(this.renderStackElement.value instanceof FillStroke){
-          const o:FillStroke = this.renderStackElement.value;
+        if (this.renderStackElement.value instanceof FillStroke) {
+          const o: FillStroke = this.renderStackElement.value;
 
-          this.width = w + o.offsetW*2;
-          this.height = h + o.offsetH*2;
+          this.width = w + o.offsetW * 2;
+          this.height = h + o.offsetH * 2;
           context.save();
 
-          var m:DOMMatrix = new DOMMatrix().translate(o.offsetW,o.offsetH).scale(w,h);
-          context.setTransform(m.a,m.b,m.c,m.d,m.e,m.f);
+          var m: DOMMatrix = new DOMMatrix().translate(o.offsetW, o.offsetH).scale(w, h);
+          context.setTransform(m.a, m.b, m.c, m.d, m.e, m.f);
 
-          (o as any).apply(context,this.renderStackElement.lastPath,target);
+          (o as any).apply(context, this.renderStackElement.lastPath, target);
 
           this.context.restore();
         }
 
-      }else{
+      } else {
 
-        const renderStack:RenderStack = target.renderStack;
+        const renderStack: RenderStack = target.renderStack;
         renderStack.updateBounds(target);
-        this.width = w + renderStack.offsetW*2;
-        this.height = h + renderStack.offsetH*2;
+        this.width = w + renderStack.offsetW * 2;
+        this.height = h + renderStack.offsetH * 2;
 
         context.save();
-        var m:DOMMatrix = new DOMMatrix().translate(renderStack.offsetW,renderStack.offsetH).scale(w,h);
-        context.setTransform(m.a,m.b,m.c,m.d,m.e,m.f);
+        var m: DOMMatrix = new DOMMatrix().translate(renderStack.offsetW, renderStack.offsetH).scale(w, h);
+        context.setTransform(m.a, m.b, m.c, m.d, m.e, m.f);
 
-        let o:RenderStackElement;
-        let path:Path;
-        let text:TextPath;
-        let elements:RenderStackElement[] = target.renderStack.elements;
+        let o: RenderStackElement;
+        let path: Path;
+        let text: TextPath;
+        let elements: RenderStackElement[] = target.renderStack.elements;
 
-        let i:number,nb:number = target.renderStack.elements.length;
-        for(i=0;i<nb;i++){
-            o = target.renderStack.elements[i];
-            context.save();
-            if(o.enabled){
-              if(o.isShape) (o.value as Shape).apply(context,target);
+        let i: number, nb: number = elements.length;
+        for (i = 0; i < nb; i++) {
+          o = elements[i];
+          context.save();
+          if (o.enabled) {
+            if (o.isShape) (o.value as Shape).apply(context, target);
+            else {
+              if (o.isPath) path = o.value as Path
+              else if (o.isTextPath) text = o.value as TextPath;
               else {
-                if(o.isPath) path = o.value as Path
-                else if(o.isTextPath) text = o.value as TextPath;
-                else {
-                  if(o.isTextFillStroke) (o.value as TextRenderable).apply(context,text,target);
-                  else (o.value as PathRenderable).apply(context,path,target);
-                }
+                if (o.isTextFillStroke) (o.value as TextRenderable).apply(context, text, target);
+                else (o.value as PathRenderable).apply(context, path, target);
               }
             }
+          }
 
-            context.restore();
+          context.restore();
         }
         context.restore();
       }

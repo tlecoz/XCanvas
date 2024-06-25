@@ -1,24 +1,28 @@
-class TextPath extends RegisterableObject {
+import { RegisterableObject } from "../../utils/RegisterableObject";
 
-  public text:string;
+export class TextPath extends RegisterableObject {
 
-  constructor(text:string){
+  public text: string;
+
+  constructor(text: string) {
     super();
     this.text = text;
   }
 
-  public get dataString():string{return this.text;}
-  public static fromDataString(data:string){return new TextPath(data);}
+  public get dataString(): string { return this.text; }
+  public static fromDataString(data: string) { return new TextPath(data); }
 
 
-
-  public isPointInside(context,px:number,py:number,isStroke:boolean,fillrule="nonzero"):boolean{
+  //@ts-ignore
+  public isPointInside(context, px: number, py: number, isStroke: boolean, fillrule = "nonzero"): boolean {
     return false;
   }
-  public isPointInPath(context:CanvasRenderingContext2D,px:number,py:number):boolean{
+  //@ts-ignore
+  public isPointInPath(context: CanvasRenderingContext2D, px: number, py: number): boolean {
     return false;
   }
-  public isPointInStroke(context:CanvasRenderingContext2D,px:number,py:number):boolean{
+  //@ts-ignore
+  public isPointInStroke(context: CanvasRenderingContext2D, px: number, py: number): boolean {
     return false;
   }
 }

@@ -1,4 +1,5 @@
-class SpritesheetSequence {
+/*
+export class SpritesheetSequence {
 
 
   private nbX:number;
@@ -78,4 +79,4 @@ class SpritesheetSequence {
 
   public get nbFrame():number{return this._nbFrame;}
 
-}
+}*/

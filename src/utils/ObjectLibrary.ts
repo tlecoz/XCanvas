@@ -1,147 +1,184 @@
-class ObjectLibrary {
 
-  private static _instance:ObjectLibrary;
-  private static creatingObjectsAfterLoad:boolean = false;
 
-  private objects:any;
-  private names:string[];
-  private indexByName:number[];
+export class ObjectLibrary {
 
-  private objectById:any[];
-  private nbObject:number= 0;
+  public static classes: { [key: string]: any }
 
-  private loadObjectsByID:any[];
+  private static _instance: ObjectLibrary;
+  private static creatingObjectsAfterLoad: boolean = false;
 
-  constructor(){
-    if(!ObjectLibrary._instance){
+  private objects: any;
+  private names: string[];
+  private indexByName: { [key: string]: number };
+
+  private objectById: any[];
+  private nbObject: number = 0;
+
+  private loadObjectsByID: { [key: string]: any };
+
+  constructor() {
+    if (!ObjectLibrary._instance) {
       ObjectLibrary._instance = this;
       this.objects = {};
       this.names = [];
-      this.indexByName = [];
+      this.indexByName = {};
       this.objectById = [];
-    }else{
+      this.loadObjectsByID = {};
+    } else {
       throw new Error("ObjectLibrary is a singleton. You must use ObjectLibrary.instance")
     }
   }
 
-  public registerObject(dataType:string,o:any):string{
+  public registerObject(dataType: string, o: any): string {
 
-    if(ObjectLibrary.creatingObjectsAfterLoad) {
+    if (ObjectLibrary.creatingObjectsAfterLoad) {
       //console.log("ObjectLibrary.creatingObjectsAfterLoad ",o);
       return "";
     }
-    let id:number,typeId:number;
-    if(!this.objects[dataType]){
+    let id: number, typeId: number;
+    if (!this.objects[dataType]) {
       this.indexByName[dataType] = typeId = this.names.length;
       this.names.push(dataType);
       this.objects[dataType] = {
-        typeId:typeId,
-        elements:[o]
+        typeId: typeId,
+        elements: [o]
       }
       id = 0;
-    }else{
+    } else {
       var obj = this.objects[dataType];
       typeId = obj.typeId;
       id = obj.elements.length;
       obj.elements[id] = o;
     }
 
-    var ID:string = typeId+"_"+id;
+    var ID: string = typeId + "_" + id;
 
     this.objectById[this.nbObject++] = {
-      type:typeId,
-      ID:ID,
-      value:o
+      type: typeId,
+      ID: ID,
+      value: o
     }
 
     return ID;
   }
 
 
-  public save(fileName:string="test.txt"){
-    var data:string = this.names.join(",")+"[####]";
-    var i:number,len:number = this.nbObject;
-    var o:any,dataString:string;
-    for(i=0;i<len;i++){
+  /*
+  public save(fileName: string = "test.txt") {
+    var data: string = this.names.join(",") + "[####]";
+    var i: number, len: number = this.nbObject;
+    var o: any, dataString: string;
+    for (i = 0; i < len; i++) {
       o = this.objectById[i];
       dataString = o.value.dataString;
-      if(dataString != ""){
+      if (dataString != "") {
         //console.log(i,o.value);
-        if(i != 0) data += "[#]";
-        data += o.ID+"[|]"+dataString;
-      }else{
+        if (i != 0) data += "[#]";
+        data += o.ID + "[|]" + dataString;
+      } else {
         //console.log("error : ",o.value)
       }
     }
 
     var xhr = new XMLHttpRequest();
-    var params = "fileName="+fileName+"&data="+data;
-    xhr.open("POST","saveFile.php");
+    var params = "fileName=" + fileName + "&data=" + data;
+    xhr.open("POST", "saveFile.php");
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {//Call a function when the state changes.
-      if(xhr.readyState == 4 && xhr.status == 200) {
-          //console.log(xhr.responseText);
+    xhr.onreadystatechange = function () {//Call a function when the state changes.
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        //console.log(xhr.responseText);
       }
     }
     xhr.send(params);
+  }*/
+
+  public save(fileName: string = "test.txt") {
+    let data: string = this.names.join(",") + "[####]";
+    const len: number = this.nbObject;
+    let o: any, dataString: string;
+
+    for (let i = 0; i < len; i++) {
+      o = this.objectById[i];
+      dataString = o.value.dataString;
+      if (dataString !== "") {
+        if (i !== 0) data += "[#]";
+        data += o.ID + "[|]" + dataString;
+      }
+    }
+
+    // Crée un Blob avec les données
+    const blob = new Blob([data], { type: 'text/plain' });
+
+    // Crée un lien de téléchargement
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
 
-  public load(url:string,onLoaded:Function=null):void{
+
+  //@ts-ignore
+  public load(url: string, onLoaded?: (res: string) => void): void {
     var th = this;
     this.loadObjectsByID = [];
     ObjectLibrary.creatingObjectsAfterLoad = true;
     var xhr = new XMLHttpRequest();
-    xhr.open("GET","test.txt");
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState == 4 && xhr.status == 200) {
-          //console.log(xhr.responseText);
-          //console.log("########### LOADED #####################")
-          var datas = xhr.responseText;
-          var t = datas.split("[####]");
-          th.names = t[0].split(",");
+    xhr.open("GET", "test.txt");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        //console.log(xhr.responseText);
+        //console.log("########### LOADED #####################")
+        var datas = xhr.responseText;
+        var t = datas.split("[####]");
+        th.names = t[0].split(",");
 
-          var i:number,len:number = th.names.length;
-          for(i=0;i<len;i++) th.objects[th.names[i]] = {type:i,elements:[]};
+        var i: number, len: number = th.names.length;
+        for (i = 0; i < len; i++) th.objects[th.names[i]] = { type: i, elements: [] };
 
-          var objects = t[1].split("[#]");
-          var dataString,infos;
-          var className;
-          var ID,instanceId,classId;
-          len = objects.length;
+        var objects = t[1].split("[#]");
+        var dataString, infos;
+        var className;
+        var ID, instanceId, classId;
+        len = objects.length;
 
-          var temp = []
-          for(i=0;i<len;i++){
-            t = objects[i].split("[|]");
-            ID = t[0];
-            infos = ID.split("_");
-            classId = Number(infos[0]);
-            className = th.names[classId];
-            instanceId = Number(infos[1]);
-            dataString = t[1];
+        var temp = []
+        for (i = 0; i < len; i++) {
+          t = objects[i].split("[|]");
+          ID = t[0];
+          infos = ID.split("_");
+          classId = Number(infos[0]);
+          className = th.names[classId];
+          instanceId = Number(infos[1]);
+          dataString = t[1];
 
-            th.loadObjectsByID[ID] = temp[i] = {className:className,instanceId:instanceId,dataString:dataString};
-
-
-            //if(!th.objects[className]) th.objects[className] = {type:classId,elements:[]};
-            //th.objects[className].elements[instanceId] = eval(className).fromDataString(dataString)
+          th.loadObjectsByID[ID] = temp[i] = { className: className, instanceId: instanceId, dataString: dataString };
 
 
-            //console.log(className+" : "+dataString);
-            //console.log(th.objects[className].elements[instanceId]);
-          }
-
-          var o;
-          for(i=0;i<len;i++){
-            o = temp[i];
-            console.log(i,o.className,o.instanceId,o.dataString)
-            th.objects[o.className].elements[o.instanceId] = eval(o.className).fromDataString(o.dataString);
-          }
+          //if(!th.objects[className]) th.objects[className] = {type:classId,elements:[]};
+          //th.objects[className].elements[instanceId] = eval(className).fromDataString(dataString)
 
 
-          ObjectLibrary.creatingObjectsAfterLoad = false;
-          //console.log("#########################")
-          if(onLoaded) onLoaded(xhr.responseText);
+          //console.log(className+" : "+dataString);
+          //console.log("className => " + ID + " ==> ", th.loadObjectsByID[ID]);
+        }
+
+        var o;
+        for (i = 0; i < len; i++) {
+          o = temp[i];
+          //console.log(i, o.className, o.instanceId, o.dataString)
+          th.objects[o.className].elements[o.instanceId] = ObjectLibrary.classes[o.className].fromDataString(o.dataString);
+          //th.objects[o.className].elements[o.instanceId] = eval(o.className).fromDataString(o.dataString);
+        }
+
+
+        ObjectLibrary.creatingObjectsAfterLoad = false;
+        //console.log("#########################")
+        if (onLoaded) onLoaded(xhr.responseText);
       }
     }
     xhr.send(null);
@@ -154,28 +191,29 @@ class ObjectLibrary {
 
 
 
-  public static get instance():ObjectLibrary{
-    if(!ObjectLibrary._instance) new ObjectLibrary();
+  public static get instance(): ObjectLibrary {
+    if (!ObjectLibrary._instance) new ObjectLibrary();
     return ObjectLibrary._instance;
   }
 
-  public get dataTypes():string[]{return this.names}
-  public getElementsByName(name:string):any[]{
+  public get dataTypes(): string[] { return this.names }
+  public getElementsByName(name: string): any[] {
     //console.log("getElementsByName ",name)
     return this.objects[name].elements;
   }
 
-  public getObjectByRegisterId(registerId:string):any{
-    let t:string[] = registerId.split("_");
-    let o:any = this.objects[this.names[Number(t[0])]].elements[Number(t[1])];
-    if(o) return o;
+  public getObjectByRegisterId(registerId: string): any {
+    let t: string[] = registerId.split("_");
+    let o: any = this.objects[this.names[Number(t[0])]].elements[Number(t[1])];
+    if (o) return o;
 
 
-    if(this.loadObjectsByID){
+    if (this.loadObjectsByID) {
       let obj = this.loadObjectsByID[registerId];
-      if(obj){
+      if (obj) {
         //console.log("this.objects["+obj.className+"].elements["+obj.instanceId+"] = "+obj.dataString)
-        this.objects[obj.className].elements[obj.instanceId] = o = eval(obj.className).fromDataString(obj.dataString);
+        this.objects[obj.className].elements[obj.instanceId] = o = ObjectLibrary.classes[obj.className].fromDataString(obj.dataString);
+        //this.objects[obj.className].elements[obj.instanceId] = o = eval(obj.className).fromDataString(obj.dataString);
         return o;
       }
     }
@@ -184,20 +222,21 @@ class ObjectLibrary {
 
   }
 
-  public static print():void{
+  public static print(): void {
     var lib = ObjectLibrary.instance;
-    var names:string[] = lib.dataTypes;
-    var i:number,len:number = names.length;
-    var name:string;
-    for(i=0;i<len;i++){
+    var names: string[] = lib.dataTypes;
+    var i: number, len: number = names.length;
+    //@ts-ignore
+    var name: string;
+    for (i = 0; i < len; i++) {
       name = names[i];
-      //console.log("nb "+name+" = "+lib.getElementsByName(name).length);
+      //console.log("nb " + name + " = " + lib.getElementsByName(name).length);
     }
   }
-  public static printElements(name:string){
+  public static printElements(name: string) {
     var t = ObjectLibrary.instance.getElementsByName(name);
-    var i:number,len:number = t.length;
-    for(i=0;i<len;i++) console.log(i," => ",t[i]);
+    var i: number, len: number = t.length;
+    for (i = 0; i < len; i++) console.log(i, " => ", t[i]);
   }
 
 }

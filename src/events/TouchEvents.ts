@@ -1,4 +1,4 @@
-class TouchEvents {
+export class TouchEvents {
   public static START = "START";
   public static END = "END";
   public static CANCEL = "CANCEL";

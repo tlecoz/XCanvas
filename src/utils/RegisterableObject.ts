@@ -1,17 +1,19 @@
-class RegisterableObject {
+import { ObjectLibrary } from "./ObjectLibrary";
 
-  protected ___ID:string;//classNameId_instanceId
+export class RegisterableObject {
 
-  constructor(){
+  protected ___ID: string;//classNameId_instanceId
 
-    this.___ID = ObjectLibrary.instance.registerObject(this.constructor.name,this);
+  constructor() {
+
+    this.___ID = ObjectLibrary.instance.registerObject(this.constructor.name, this);
   }
 
-  public get REGISTER_ID():string{return this.___ID};
+  public get REGISTER_ID(): string { return this.___ID };
 
 
 
-  public get dataString():string{
+  public get dataString(): string {
     return "";
   }
 }

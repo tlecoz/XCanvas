@@ -1,4 +1,4 @@
-class MouseEvents {
+export class MouseEvents {
   public static CLICK = "CLICK";
   public static DOUBLE_CLICK = "DOUBLE_CLICK";
   public static DOWN = "DOWN";

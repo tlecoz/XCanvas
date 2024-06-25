@@ -1,9 +1,14 @@
-class App2 {
+import { ObjectLibrary } from "./utils/ObjectLibrary";
 
-  constructor(){
+import * as classes from "./index";
 
+export class App2 {
+
+  constructor() {
+
+    ObjectLibrary.classes = classes;
     var stage;
-    ObjectLibrary.instance.load("test.txt",function(){
+    ObjectLibrary.instance.load("test.txt", function () {
       ObjectLibrary.print()
       //ObjectLibrary.printElements("RenderStackElement")
 
@@ -14,9 +19,9 @@ class App2 {
       animate()
     })
 
-    function animate(){
-    
-        stage.drawElements();
+    function animate() {
+
+      stage.drawElements();
       requestAnimationFrame(animate);
     }
 

@@ -1,1 +1,0 @@
-{"version":3,"file":"RegisterableObject.js","sourceRoot":"","sources":["../../src/utils/RegisterableObject.ts"],"names":[],"mappings":"AAAA;IAIE;QAEE,IAAI,CAAC,KAAK,GAAG,aAAa,CAAC,QAAQ,CAAC,cAAc,CAAC,IAAI,CAAC,WAAW,CAAC,IAAI,EAAC,IAAI,CAAC,CAAC;IACjF,CAAC;IAED,IAAW,WAAW,KAAU,OAAO,IAAI,CAAC,KAAK,CAAA,CAAA,CAAC;IAAA,CAAC;IAInD,IAAW,UAAU;QACnB,OAAO,EAAE,CAAC;IACZ,CAAC;CACF"}
