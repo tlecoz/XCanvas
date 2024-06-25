@@ -27,6 +27,7 @@ import { FilterStack } from "./style/filters/FilterStack";
 //import { GradientTextFill } from "./style/textstyles/fills/GradientTextFill";
 //import { PatternTextFill } from "./style/textstyles/fills/PatternTextFill";
 import { SolidStroke } from "./style/strokes/SolidStroke";
+import { RenderStackElement } from "./display/RenderStackElement";
 
 
 export class App {
@@ -179,6 +180,7 @@ export class App {
     var nbMc = 1
     var i;
     var alpha = 1;
+    var textElement: RenderStackElement;
     for (i = 0; i < nbMc; i++) {
 
       var mc = new Display2D(400, 400);
@@ -187,7 +189,7 @@ export class App {
       mc.stack(CirclePath.instance);
       mc.stack(fill);
       mc.stack(stroke);
-      mc.stack(new TextPath("Hello Canvas !"));
+      textElement = mc.stack(new TextPath("Hello Canvas !"));
       mc.stack(textFill);
 
       mc.stack(shape);
@@ -226,17 +228,22 @@ export class App {
     var a = 0
     function animate() {
       a += 0.01;
-
+      console.log(textElement);
+      const text = "Hello Canvas !";
+      var pct = Math.sin(a * 2.5);
+      (textElement as any).value.text = "Hello Canvas ! ".slice(0, Math.round(text.length * Math.abs(pct)));
       vectoLineStyle.lineWidth = Math.abs(Math.cos(a)) * 15;
 
       //stroke.lineStyle.dashOffset = (Math.sin(a*0.05))*300
-      var pct = Math.sin(a * 5);
+
       c0.g = 127 + Math.abs(pct * 100);
       c0.b = 255 - Math.abs(pct * 255);
       //mc.scaleX = mc.scaleY = 1 + (Math.sin(a*0.1))*0.5
       //mc.rotation += 1
 
-      //glow.radius = 10 + 25 * pct;
+
+
+      glow.radius = 25 + 50 * Math.sin(pct * Math.PI * 0.2);
 
       for (i = 0; i < nbMc; i++) {
         //mcs[i].rotation = -a*100;
@@ -248,15 +255,14 @@ export class App {
       //lineOption.dashOffset = pct
       lineOption.dashLineDist = 25 + pct * 15;
       lineOption.dashHoleDist = 20 + (1 - pct) * 5;
-      //mc.x = 500 + Math.sin(a*0.05)*300
+      mc.x = 400 + Math.sin(a) * 150
       fill.rotation -= 0.0025;
       stroke.rotation += 0.01;
       //
 
-      //fill.rotation -= 0.01;
 
-      //fill.scaleX = fill.scaleY = 0.5+Math.abs(Math.sin(a)*1.5);
-      //fill.x= Math.sin(a * Math.PI/180);
+      fill.scaleX = fill.scaleY = 1 + Math.abs(Math.sin(a) * .5);
+      fill.x = Math.sin(a * Math.PI) * 100;
       //gradient.needsUpdate = true;
 
       stage.drawElements();

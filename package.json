@@ -1,6 +1,6 @@
 {
   "name": "xcanvas",
-  "private": true,
+  "private": false,
   "version": "0.9.0",
   "type": "module",
   "scripts": {

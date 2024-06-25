@@ -250,7 +250,6 @@ export class Pattern extends FillStroke {
       let sx = 1, sy = 1;
       if (this.crop) {
 
-
         let s = tw / w;
         w *= s;
         h *= s;
@@ -278,8 +277,8 @@ export class Pattern extends FillStroke {
         this.matrix.rotate(this.rotation / FillStroke.radian)
         this.matrix.translate(-(w / sx) / 2, -(h / sy) / 2);
 
-        this.matrix.translate(this.x, this.y);
 
+        this.matrix.translate(this.x, this.y);
 
 
       } else {
