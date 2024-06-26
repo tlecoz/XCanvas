@@ -195,7 +195,7 @@ export class GradientColor extends EventDispatcher {
 
     nbStep = this.nbStep;
     const updateCol = () => {
-
+      //console.log("updateCol ", this.ctx)
       this.dirty = true;
       if (this.ctx) this.getGradientStyle(this.ctx);
       this.onUpdateStyle?.();
@@ -245,6 +245,7 @@ export class GradientColor extends EventDispatcher {
     if (this.dirty || this.ctx != context2D) {
 
 
+
       this.ctx = context2D;
 
       const x: number = this.x + this._x;
@@ -270,7 +271,7 @@ export class GradientColor extends EventDispatcher {
       const colors: SolidColor[] = this.colors;
       for (i = 0; i < nb; i++) obj.addColorStop(ratios[i], colors[i].style as string);
 
-
+      //console.log(colors[0].style)
       this.style = obj;
       this.dirty = false;
       this.dispatchEvent(GradientColor.UPDATE_STYLE);

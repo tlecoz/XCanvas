@@ -6,20 +6,18 @@ import { Gradient } from "../Gradient";
 
 export class GradientFill extends Gradient {
 
-  constructor(gradient: GradientColor, isLinear: boolean = true) {
-    super(gradient, isLinear)
+  constructor(gradient: GradientColor) {
+    super(gradient)
     this.styleType = "fillStyle";
 
   }
 
   public get dataString(): string {
-    var linear: number = 0;
-    if (this.isLinear) linear = 1;
-    return this.gradient.REGISTER_ID + "," + linear;
+    return this.gradient.REGISTER_ID;
   }
   public static fromDataString(data: string): GradientFill {
     var t: string[] = data.split(",");
-    return new GradientFill(ObjectLibrary.instance.getObjectByRegisterId(t[0]), t[1] == "1");
+    return new GradientFill(ObjectLibrary.instance.getObjectByRegisterId(t[0]));
   }
 
   public apply(context: CanvasRenderingContext2D, path: Path, target: Display2D): void {

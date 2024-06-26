@@ -1,41 +1,41 @@
 export class GlobalCompositeOperations {
 
-  public static DEFAULT = "source-over";
+  public static DEFAULT: GlobalCompositeOperation = "source-over";
 
-  public static SOURCE_OVER = "source-over";
-  public static SOURCE_IN = "source-in";
-  public static SOURCE_OUT = "source-out";
-  public static SOURCE_ATOP = "source-atop";
+  public static SOURCE_OVER: GlobalCompositeOperation = "source-over";
+  public static SOURCE_IN: GlobalCompositeOperation = "source-in";
+  public static SOURCE_OUT: GlobalCompositeOperation = "source-out";
+  public static SOURCE_ATOP: GlobalCompositeOperation = "source-atop";
 
-  public static DESTINATION_OVER = "destination-over";
-  public static DESTINATION_IN = "destination-in";
-  public static DESTINATION_OUT = "destination-out";
-  public static DESTINATION_ATOP = "destination-atop";
+  public static DESTINATION_OVER: GlobalCompositeOperation = "destination-over";
+  public static DESTINATION_IN: GlobalCompositeOperation = "destination-in";
+  public static DESTINATION_OUT: GlobalCompositeOperation = "destination-out";
+  public static DESTINATION_ATOP: GlobalCompositeOperation = "destination-atop";
 
-  public static LIGHTER = "lighter";
-  public static LIGHTEN = "lighten";
-  public static OVERLAY = "overlay";
-  public static DARKEN = "darken";
+  public static LIGHTER: GlobalCompositeOperation = "lighter";
+  public static LIGHTEN: GlobalCompositeOperation = "lighten";
+  public static OVERLAY: GlobalCompositeOperation = "overlay";
+  public static DARKEN: GlobalCompositeOperation = "darken";
 
-  public static HARD_LIGHT = "hard-light";
-  public static SOFT_LIGHT = "soft-light";
+  public static HARD_LIGHT: GlobalCompositeOperation = "hard-light";
+  public static SOFT_LIGHT: GlobalCompositeOperation = "soft-light";
 
-  public static COPY = "copy";
-  public static XOR = "xor";
-  public static MULTIPLY = "mutiply";
-  public static SCREEN = "screen";
+  public static COPY: GlobalCompositeOperation = "copy";
+  public static XOR: GlobalCompositeOperation = "xor";
+  public static MULTIPLY: GlobalCompositeOperation = "multiply";
+  public static SCREEN: GlobalCompositeOperation = "screen";
 
-  public static COLOR_DODGE = "color-dodge";
-  public static COLOR_BURN = "color-burn";
+  public static COLOR_DODGE: GlobalCompositeOperation = "color-dodge";
+  public static COLOR_BURN: GlobalCompositeOperation = "color-burn";
 
-  public static DIFFERENCE = "difference";
-  public static EXCLUSION = "exclusion";
+  public static DIFFERENCE: GlobalCompositeOperation = "difference";
+  public static EXCLUSION: GlobalCompositeOperation = "exclusion";
 
-  public static HUE = "hue";
-  public static SATURATION = "saturation";
-  public static COLOR = "color";
-  public static LUMINOSITY = "luminosity";
+  public static HUE: GlobalCompositeOperation = "hue";
+  public static SATURATION: GlobalCompositeOperation = "saturation";
+  public static COLOR: GlobalCompositeOperation = "color";
+  public static LUMINOSITY: GlobalCompositeOperation = "luminosity";
 
-  public static MASK_OUTSIDE = "source-atop";
-  public static MASK_INSIDE = "xor";
+  public static MASK_OUTSIDE: GlobalCompositeOperation = "source-atop";
+  public static MASK_INSIDE: GlobalCompositeOperation = "xor";
 }

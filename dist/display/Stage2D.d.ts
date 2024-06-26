@@ -7,10 +7,11 @@ export declare class Stage2D extends Group2D {
     protected _outputContext: CanvasRenderingContext2D | any;
     protected _context: CanvasRenderingContext2D;
     protected _mouseControler: MouseControler;
-    constructor(w: number, h: number, appendOnBody?: boolean);
+    constructor(w: number | HTMLCanvasElement, h?: number, appendOnBody?: boolean);
     get dataString(): string;
     static fromDataString(data: string): Stage2D;
     get canvas(): HTMLCanvasElement;
+    get outputCanvas(): HTMLCanvasElement;
     get context(): CanvasRenderingContext2D;
     get mouseControler(): MouseControler;
     get globalAlpha(): number;
@@ -19,6 +20,8 @@ export declare class Stage2D extends Group2D {
     get globalScaleX(): number;
     get globalScaleY(): number;
     get globalRotation(): number;
+    get stageWidth(): number;
+    get stageHeight(): number;
     clearElements(): void;
     drawElements(): void;
 }

@@ -11,11 +11,13 @@ export class SolidColor extends EventDispatcher {
   protected _b: number;
   protected _a: number;
   protected _style: string | undefined;
-  protected useAlpha: boolean = false;
+  protected useAlpha: boolean = true;
 
 
   constructor(r: number | string, g: number = -1, b: number = 0, a: number = 1) {
     super();
+
+
     //r can contains these values :
     //-> 0...255 => as the red component
     //-> 0xrrggbb => RGB hex number

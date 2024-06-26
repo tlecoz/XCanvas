@@ -13,6 +13,9 @@ export class Pt2D {
     this.y = y;
     this.isCurveAnchor = isCurveAnchor;
   }
+
+  public clone(): Pt2D { return new Pt2D(this.x, this.y, this.isCurveAnchor) };
+
   public equals(pt: Pt2D): boolean { return this.x == pt.x && this.y == pt.y }
   public add(pt: Pt2D): Pt2D { return new Pt2D(this.x + pt.x, this.y + pt.y) };
   public substract(pt: Pt2D) { return new Pt2D(this.x - pt.x, this.y - pt.y); }

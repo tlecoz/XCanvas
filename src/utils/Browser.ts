@@ -9,6 +9,9 @@ export class Browser {
   //@ts-ignore
   private static emptyImageBitmap: ImageBitmap;
 
+  public static disableOffscreenCanvas: boolean = false;
+  public static disableWorker: boolean = false;
+  public static disableImageBitmap: boolean = false;
 
   constructor() {
     if (!Browser._instance) {
@@ -24,14 +27,17 @@ export class Browser {
   }
 
   public static get canUseImageBitmap(): boolean {
+    if (Browser.disableImageBitmap) return false;
     if (!Browser._instance) new Browser();
     return Browser._canUseImageBitmap;
   }
   public static get canUseWorker(): boolean {
+    if (Browser.disableWorker) return false;
     if (!Browser._instance) new Browser();
     return Browser._canUseWorker;
   }
   public static get canUseOffscreenCanvas(): boolean {
+    if (Browser.disableOffscreenCanvas) return false;
     if (!Browser._instance) new Browser();
     return Browser._canUseOffscreenCanvas;
   }

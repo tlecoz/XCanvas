@@ -1,4 +1,6 @@
 import { EventDispatcher } from "../events/EventDispatcher";
+import { Align } from "./Align";
+import { Pt2D } from "./Pt2D";
 
 export class Matrix2D extends EventDispatcher {
 
@@ -6,8 +8,11 @@ export class Matrix2D extends EventDispatcher {
 
   public x: number = 0;
   public y: number = 0;
+
   public xAxis: number = 0;
   public yAxis: number = 0;
+  public axis: Pt2D = Align.TOP_LEFT.clone();
+
   public rotation: number = 0;
   public scaleX: number = 1;
   public scaleY: number = 1;
@@ -21,6 +26,8 @@ export class Matrix2D extends EventDispatcher {
   protected matrix: DOMMatrix;
 
   protected savedMatrixs: any;
+
+  public debug: boolean = false;
 
   constructor() {
     super();
@@ -107,6 +114,8 @@ export class Matrix2D extends EventDispatcher {
 
   public applyTransform(): DOMMatrix {
     const m: DOMMatrix = this.matrix;
+
+
 
     m.translateSelf(this.x, this.y);
     m.rotateSelf(this.rotation);

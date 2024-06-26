@@ -325,14 +325,17 @@ const _Browser = class _Browser {
     }
   }
   static get canUseImageBitmap() {
+    if (_Browser.disableImageBitmap) return false;
     if (!_Browser._instance) new _Browser();
     return _Browser._canUseImageBitmap;
   }
   static get canUseWorker() {
+    if (_Browser.disableWorker) return false;
     if (!_Browser._instance) new _Browser();
     return _Browser._canUseWorker;
   }
   static get canUseOffscreenCanvas() {
+    if (_Browser.disableOffscreenCanvas) return false;
     if (!_Browser._instance) new _Browser();
     return _Browser._canUseOffscreenCanvas;
   }
@@ -343,6 +346,9 @@ __publicField(_Browser, "_canUseOffscreenCanvas", false);
 __publicField(_Browser, "_instance");
 //@ts-ignore
 __publicField(_Browser, "emptyImageBitmap");
+__publicField(_Browser, "disableOffscreenCanvas", false);
+__publicField(_Browser, "disableWorker", false);
+__publicField(_Browser, "disableImageBitmap", false);
 let Browser = _Browser;
 const _BitmapPixel = class _BitmapPixel {
   constructor() {
@@ -5765,7 +5771,7 @@ class Group2D extends Display2D {
   }
 }
 class Stage2D extends Group2D {
-  constructor(w, h, appendOnBody = true) {
+  constructor(w, h = 0, appendOnBody = true) {
     super();
     __publicField(this, "_canvas");
     __publicField(this, "_output");
@@ -5773,22 +5779,33 @@ class Stage2D extends Group2D {
     __publicField(this, "_context");
     __publicField(this, "_mouseControler");
     this._stage = this;
-    if (!Browser.canUseOffscreenCanvas) {
+    if (w instanceof HTMLCanvasElement) {
+      appendOnBody = false;
+      this._output = w;
+      this._outputContext = w.getContext("2d");
       this._canvas = document.createElement("canvas");
-      this._output = this._canvas;
-      this._output.style.position = "absolute";
-      this._outputContext = this._output.getContext("2d");
+      this._canvas.width = w.width;
+      this._canvas.height = w.height;
+      this._context = this._canvas.getContext("2d");
     } else {
-      this._canvas = new window.OffscreenCanvas(w, h);
-      this._output = document.createElement("canvas");
-      this._output.style.position = "absolute";
-      if (Browser.canUseImageBitmap) this._outputContext = this._output.getContext("bitmaprenderer");
-      else this._outputContext = this._output.getContext("2d");
+      if (!Browser.canUseOffscreenCanvas) {
+        this._canvas = document.createElement("canvas");
+        this._output = this._canvas;
+        this._output.style.position = "absolute";
+        this._outputContext = this._output.getContext("2d");
+      } else {
+        this._canvas = new window.OffscreenCanvas(w, h);
+        this._output = document.createElement("canvas");
+        this._output.style.position = "absolute";
+        if (Browser.canUseImageBitmap) this._outputContext = this._output.getContext("bitmaprenderer");
+        else this._outputContext = this._output.getContext("2d");
+      }
+      this._canvas.width = this._output.width = w;
+      this._canvas.height = this._output.height = h;
+      this._context = this._canvas.getContext("2d");
     }
-    this._canvas.width = this._output.width = w;
-    this._canvas.height = this._output.height = h;
-    this._context = this._canvas.getContext("2d");
     this._mouseControler = new MouseControler(this._output);
+    console.log("new Stage2D ", w, h, appendOnBody);
     if (appendOnBody) document.body.appendChild(this._output);
   }
   get dataString() {
@@ -5806,6 +5823,9 @@ class Stage2D extends Group2D {
   }
   get canvas() {
     return this._canvas;
+  }
+  get outputCanvas() {
+    return this._output;
   }
   get context() {
     return this._context;
@@ -5831,6 +5851,12 @@ class Stage2D extends Group2D {
   get globalRotation() {
     return this.rotation;
   }
+  get stageWidth() {
+    return this._canvas.width;
+  }
+  get stageHeight() {
+    return this._canvas.height;
+  }
   clearElements() {
     const len = this.numChildren;
     for (let i = len - 1; i >= 0; i--) {
@@ -5840,7 +5866,8 @@ class Stage2D extends Group2D {
     }
   }
   drawElements() {
-    this._canvas.width = this._canvas.width;
+    this._context.fillStyle = "#000";
+    this._context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     super.update(this._context);
     if (Browser.canUseImageBitmap) {
       createImageBitmap(this._canvas).then((bmp) => this._outputContext.transferFromImageBitmap(bmp));

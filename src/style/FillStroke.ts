@@ -34,6 +34,8 @@ export class FillStroke extends RegisterableObject {
   protected cacheDirty: boolean = false;
   protected cache: BitmapData = null;
 
+
+
   constructor() {
     super();
     //this._filters = new FilterStack();
@@ -53,6 +55,8 @@ export class FillStroke extends RegisterableObject {
     } else {
       context.filter = "none";
     }
+
+
   }
 
   public get cacheAsBitmap(): boolean { return this._cacheAsBitmap }

@@ -126,6 +126,7 @@ export class Gradient extends FillStroke implements IDirty {
   public apply(context: CanvasRenderingContext2D, path: Fillable, target: Display2D): void {
 
     if (this.dirty || this._gradient.dirty) {
+      //console.log("gradient dirty")
       this._gradient.transformValues(this._x, this._y, this._scaleX, this._scaleY, this._rotation, this._radialFlareX, this._radialFlareY, this._radialFlareStrength)
       this.gradientCanvas = this._gradient.getGradientStyle(context, target);
       this.dirty = false;

@@ -27,6 +27,7 @@
   },
   "include": [
     "src",
-    "index.ts"
+    "index.ts",
+    "../XCanvas/src"
   ]
 }

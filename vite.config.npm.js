@@ -10,6 +10,6 @@ export default defineConfig({
             name: 'xcanvas-ts',
             fileName: format => `xcanvas-ts.${format}.js`,
             formats: ['es', 'umd'],
-        },
+        }
     }
 });

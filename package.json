@@ -1,18 +1,20 @@
 {
   "name": "xcanvas-ts",
-  "version": "0.9.12",
+  "version": "0.9.13",
   "description": "XCanvas is a powerful and flexible TypeScript library for manipulating HTML5 canvases, making every aspect of canvas manipulation extendable and reusable.",
-  "main": "dist/xcanvas-ts.umd.js",
-  "module": "dist/xcanvas-ts.mjs",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts",
     "dist/**/*.mjs"
   ],
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:npm": "tsc && vite build --config vite.config.npm.js",
     "preview": "vite preview",
     "setup": "npx node SetupNpmLib.js",
     "publish:npm": "vite build --config vite.config.npm.js && npm publish --access public",

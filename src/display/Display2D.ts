@@ -15,13 +15,21 @@ export type FillType = string | CanvasGradient | CanvasPattern;
 
 export class Display2D extends Matrix2D {
 
-  private static display2dIndex: number = 0;
+
 
   public static MOUSE_OVER: string = "MOUSE_OVER";
   public static MOUSE_OUT: string = "MOUSE_OUT";
   public static CLICK: string = "CLICK";
-  public static pathManager: Path = new Path();
 
+
+  public static ADDED: string = "ADDED";
+  public static REMOVED: string = "REMOVED";
+  public static ADDED_TO_STAGE: string = "ADDED_TO_STAGE";
+  public static REMOVED_FROM_STAGE: string = "REMOVED_FROM_STAGE";
+
+
+  private static display2dIndex: number = 0;
+  public static pathManager: Path = new Path();
 
   protected cache: BitmapCache;
   protected _stage: Stage2D | null = null;
@@ -52,6 +60,11 @@ export class Display2D extends Matrix2D {
   private _display2dName: string
 
 
+  protected boundFrameId: number = -1;
+
+  public axis: Pt2D = Align.TOP_LEFT;
+
+  protected waitingBound: boolean = false;
 
   constructor(w: number, h: number, renderStack?: RenderStack) {
     super();
@@ -65,6 +78,10 @@ export class Display2D extends Matrix2D {
 
     this._bounds = new Rectangle2D(0, 0, w, h);
     this.cache = new BitmapCache(this);
+
+    this.addEventListener(Display2D.ADDED_TO_STAGE, () => {
+      this.updateBounds();
+    })
 
   }
 
@@ -111,18 +128,30 @@ export class Display2D extends Matrix2D {
 
   public setStage(stage: Stage2D | null) {
     this._stage = stage;
-    if (stage) this.mouse = stage.mouseControler;
-    else this.mouse = null;
+    if (stage) {
+      this.dispatchEvent(Display2D.ADDED_TO_STAGE);
+      this.mouse = stage.mouseControler;
+    } else {
+      this.dispatchEvent(Display2D.REMOVED_FROM_STAGE);
+      this.mouse = null;
+    }
 
   }
   public get stage(): Stage2D | null { return this._stage; }
 
   public align(displayAlign: Pt2D = Align.CENTER): void {
-    this.xAxis = this.width * displayAlign.x;
-    this.yAxis = this.height * displayAlign.y;
+    this.axis = displayAlign.clone();
+
+    //this.renderStack.updateBounds(this);
   }
 
+  public updateBounds(): Rectangle2D {
+    const frameId = this.stage.frameId;
+    if (this.boundFrameId == frameId) return this._bounds;
 
+    this.boundFrameId = frameId;
+    return this.renderStack.updateBounds(this);
+  }
 
 
   public stack(renderStackElement: RenderStackable): RenderStackElement {
@@ -175,6 +204,11 @@ export class Display2D extends Matrix2D {
 
   public update(context: CanvasRenderingContext2D): void {
     this.identity();
+
+    this.xAxis = this.bounds.width * this.axis.x / this.scaleX;
+    this.yAxis = this.bounds.height * this.axis.y / this.scaleY;
+
+    //if (this.constructor.name == "Group2D") console.log("display ", this.axis.x, this.xAxis, this.yAxis)
 
     this.inverseW = 1 / this.width;
     this.inverseH = 1 / this.height;

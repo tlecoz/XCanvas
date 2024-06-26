@@ -20,6 +20,13 @@ export class Rectangle2D {
     return this;
   }
 
+  public add(r: Rectangle2D) {
+    if (r.maxX > this.maxX) this.maxX = r.maxX;
+    if (r.maxY > this.maxY) this.maxY = r.maxY;
+    if (r.minX < this.minX) this.minX = r.minX;
+    if (r.minY < this.minY) this.minY = r.minY;
+  }
+
   public get x(): number { return this.minX }
   public set x(n: number) { this.minX = n; }
 
