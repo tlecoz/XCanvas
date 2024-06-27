@@ -11,18 +11,18 @@ export class KeyboardControler extends EventDispatcher {
     for (var i: number = 0; i < 222; i++) this.isDown[i] = false;
 
     var th = this;
-    document.addEventListener("keydown", function (e) {
-      th.keyCode = e.keyCode;
-      th.isDown[th.keyCode] = true;
-      th.dispatchEvent(KeyboardEvents.KEY_DOWN);
-      th.dispatchEvent(KeyboardEvents.CHANGED);
+    document.addEventListener("keydown", (e) => {
+      this.keyCode = e.keyCode;
+      this.isDown[th.keyCode] = true;
+      this.dispatchEvent(KeyboardEvents.KEY_DOWN);
+      this.dispatchEvent(KeyboardEvents.CHANGED);
     })
 
-    document.addEventListener("keyup", function (e) {
-      th.keyCode = e.keyCode;
-      th.isDown[th.keyCode] = false;
-      th.dispatchEvent(KeyboardEvents.KEY_DOWN);
-      th.dispatchEvent(KeyboardEvents.CHANGED);
+    document.addEventListener("keyup", (e) => {
+      this.keyCode = e.keyCode;
+      this.isDown[th.keyCode] = false;
+      this.dispatchEvent(KeyboardEvents.KEY_DOWN);
+      this.dispatchEvent(KeyboardEvents.CHANGED);
     })
   }
 

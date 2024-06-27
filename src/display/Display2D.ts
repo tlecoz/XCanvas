@@ -52,7 +52,7 @@ export class Display2D extends Matrix2D {
 
 
   public parent: Group2D | null = null;
-  protected render: Function | null = null;
+  protected render: (e?: any) => void | null = null;
 
   public currentTransform: DOMMatrix | null = null;
 
@@ -62,7 +62,8 @@ export class Display2D extends Matrix2D {
 
   protected boundFrameId: number = -1;
 
-  public axis: Pt2D = Align.TOP_LEFT;
+  //public axis: Pt2D;// = Align.TOP_LEFT;
+  //protected _axis: Pt2D;
 
   protected waitingBound: boolean = false;
 
@@ -79,9 +80,19 @@ export class Display2D extends Matrix2D {
     this._bounds = new Rectangle2D(0, 0, w, h);
     this.cache = new BitmapCache(this);
 
-    this.addEventListener(Display2D.ADDED_TO_STAGE, () => {
-      this.updateBounds();
+    this.addEventListener("ADDED_TO_STAGE", () => {
+
+
+
+      const onFirstFrame = () => {
+        this.updateBounds();
+
+        this.stage.removeEventListener("DRAW_BEGIN", onFirstFrame);
+      }
+      this.stage.addEventListener("DRAW_BEGIN", onFirstFrame);
+
     })
+
 
   }
 
@@ -102,6 +113,7 @@ export class Display2D extends Matrix2D {
     Matrix2D.fromDataString(data, o);
     return o;
   }
+
 
 
   /*
@@ -146,9 +158,16 @@ export class Display2D extends Matrix2D {
   }
 
   public updateBounds(): Rectangle2D {
+    if (!this.axis) {
+      this.waitingBound = true;
+      return;
+    }
+
     const frameId = this.stage.frameId;
     if (this.boundFrameId == frameId) return this._bounds;
 
+
+    this.waitingBound = false;
     this.boundFrameId = frameId;
     return this.renderStack.updateBounds(this);
   }
@@ -205,8 +224,15 @@ export class Display2D extends Matrix2D {
   public update(context: CanvasRenderingContext2D): void {
     this.identity();
 
-    this.xAxis = this.bounds.width * this.axis.x / this.scaleX;
-    this.yAxis = this.bounds.height * this.axis.y / this.scaleY;
+    if (this.waitingBound) {
+      this.updateBounds();
+    }
+
+    if (this.bounds && this.axis) {
+      this.xAxis = this.bounds.width * this.axis.x / this.scaleX;
+      this.yAxis = this.bounds.height * this.axis.y / this.scaleY;
+    }
+
 
     //if (this.constructor.name == "Group2D") console.log("display ", this.axis.x, this.xAxis, this.yAxis)
 
@@ -225,6 +251,8 @@ export class Display2D extends Matrix2D {
     else this.renderStack.update(context, this);
 
     context.restore();
+
+
   }
 
 }

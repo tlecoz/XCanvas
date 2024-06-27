@@ -19,7 +19,7 @@ export class Pattern extends FillStroke {
   protected targetH: number;
   protected imageBmp: ImageBitmap = null;
   protected rotationInDegree: number = 0;
-  public onImageLoaded: Function;
+  public onImageLoaded: (e: any) => void;
 
   private _crop: boolean = true;
   private _applyTargetScale: boolean = false;
@@ -30,12 +30,11 @@ export class Pattern extends FillStroke {
     super()
 
     this.source = source;
-    var th = this;
 
     //@ts-ignore
-    this.onImageLoaded = function (e: BitmapData) {
-      th.imageBmp = null;
-      th.dirty = th.dirtyMatrix = true;
+    this.onImageLoaded = (e) => {
+      this.imageBmp = null;
+      this.dirty = this.dirtyMatrix = true;
     }
 
     source.addEventListener(BitmapData.IMAGE_LOADED, this.onImageLoaded);

@@ -29,11 +29,12 @@ export class Group2D extends Display2D {
   constructor() {
     super(1, 1);
     this._children = [];
+    this.axis = Align.TOP_LEFT.clone();
 
     const onChildListChange = () => {
       console.log("onChildListChange ", this, !!this.stage)
-      if (!this.stage || this.stage.frameId == 0) this.waitingBound = true;
-      this.updateBounds();
+      if (!this.stage || this.stage.frameId == 0 || !this.axis) this.waitingBound = true;
+      else this.updateBounds();
     }
     this.addEventListener(Group2D.CHILD_ADDED, onChildListChange);
     this.addEventListener(Group2D.CHILD_REMOVED, onChildListChange);
@@ -84,11 +85,21 @@ export class Group2D extends Display2D {
 
   public updateBounds(): Rectangle2D {
 
-    if (this.children.length == 0) return this._bounds;
+    if (this.children.length == 0) {
+      this.waitingBound = true;
+      return this._bounds;
+    }
+
+    for (let i = 0; i < this.children.length; i++) {
+      if (!this.children[i].axis) {
+        this.waitingBound = true;
+        return this._bounds;
+      }
+    }
 
 
     const frameId = this.stage.frameId;
-    console.log("frameId = ", frameId, this.boundFrameId)
+    //console.log("frameId = ", frameId, this.boundFrameId)
 
     if (this.boundFrameId == frameId) {
       this.waitingBound = true;
@@ -114,7 +125,7 @@ export class Group2D extends Display2D {
     this.bounds.maxX -= pt.x;
     this.bounds.maxY -= pt.y;
 
-    this.waitingBound = false;
+    this.waitingBound = this.bounds.width == 1 && this.bounds.height == 1;
 
     return this._bounds;
   }
@@ -169,8 +180,14 @@ export class Group2D extends Display2D {
       this.updateBounds();
     }
 
-    this.xAxis = this.bounds.width * this.axis.x / this.scaleX;
-    this.yAxis = this.bounds.height * this.axis.y / this.scaleY;
+    if (this.axis) {
+
+      //console.log(this.bounds.width)
+
+      this.xAxis = this.bounds.width * this.axis.x / this.scaleX;
+      this.yAxis = this.bounds.height * this.axis.y / this.scaleY;
+
+    }
 
     //if (this.constructor.name == "Group2D") console.log("display ", this.axis.x, this.xAxis, this.yAxis)
 

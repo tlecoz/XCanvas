@@ -473,7 +473,7 @@ export class BorderVectorizer {
 
 			//linePoints.sortOn("d", Array.NUMERIC);
 
-			function sortFunc(a: BorderLinePt, b: BorderLinePt): number {
+			const sortFunc = (a: BorderLinePt, b: BorderLinePt): number => {
 				if (a.d > b.d) return 1;
 				if (a.d < b.d) return -1;
 				return 0;

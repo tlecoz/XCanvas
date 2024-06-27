@@ -205,12 +205,12 @@ export class App {
       //mc.scaleX = 1.5;
       mc.addEventListener(Display2D.MOUSE_OVER, function (e) {
         //console.log("over");
-        e.alpha = 0.5;//alpha - 0.25;
+        mc.alpha = 0.5;//alpha - 0.25;
 
       })
       mc.addEventListener(Display2D.MOUSE_OUT, function (e) {
         //console.log("out");
-        e.alpha = alpha
+        mc.alpha = alpha
       })
     }
 

@@ -41,9 +41,11 @@ export class RenderStack extends RegisterableObject {
 
   public mouse: MouseControler;
 
-  public constructor() {
+  public constructor(elements?: (Path | TextPath | FillStroke | Shape)[]) {
     super();
     this._elements = [];
+
+    if (elements) elements.forEach((e) => { this.push(e) });
 
   }
 

@@ -1,4 +1,5 @@
 import { MouseControler } from "../controlers/MouseControler";
+import { Align } from "../geom/Align";
 import { Browser } from "../utils/Browser";
 import { Group2D } from "./Group2D";
 
@@ -6,6 +7,8 @@ export class Stage2D extends Group2D {
 
   public static DRAW_BEGIN: string = "DRAW_BEGIN";
   public static DRAW_END: string = "DRAW_END";
+  public static FIRST_FRAME_BEGIN: string = "FIRST_FRAME_BEGIN";
+  public static FIRST_FRAME_END: string = "FIRST_FRAME_END";
 
   protected _canvas: HTMLCanvasElement;
   protected _output: HTMLCanvasElement;
@@ -24,7 +27,7 @@ export class Stage2D extends Group2D {
   constructor(w: number | HTMLCanvasElement, h: number = 0, appendOnBody: boolean = true) {
     super();
     this._stage = this;
-
+    this.axis = Align.TOP_LEFT;
     //console.log("Stage2D canUseOffscreenCanvas = ", Browser.canUseOffscreenCanvas)
 
     if (w instanceof HTMLCanvasElement) {
@@ -142,7 +145,7 @@ export class Stage2D extends Group2D {
 
     if (this.autoClear) this.clear();
 
-
+    if (this._frameId == 0) this.dispatchEvent(Stage2D.FIRST_FRAME_BEGIN);
     this.dispatchEvent(Stage2D.DRAW_BEGIN);
 
     super.update(this._context);
@@ -166,6 +169,7 @@ export class Stage2D extends Group2D {
       this.updateBounds();
     }
 
+    if (this._frameId == 0) this.dispatchEvent(Stage2D.FIRST_FRAME_END);
     this._frameId++;
 
 

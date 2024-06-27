@@ -11,7 +11,7 @@ export class Matrix2D extends EventDispatcher {
 
   public xAxis: number = 0;
   public yAxis: number = 0;
-  public axis: Pt2D = Align.TOP_LEFT.clone();
+  public axis: Pt2D;// = Align.TOP_LEFT.clone();
 
   public rotation: number = 0;
   public scaleX: number = 1;

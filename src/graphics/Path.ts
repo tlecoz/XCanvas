@@ -3,7 +3,7 @@ import { Geometry } from "./Geometry";
 
 export class Path extends RegisterableObject {
 
-  public static objByType: { count: number, func: Function, endXY: number, countOffset: number, useRadius: boolean }[] =
+  public static objByType: { count: number, func: (...arg) => void, endXY: number, countOffset: number, useRadius: boolean }[] =
     [
       { func: Path.moveTo, count: 2, endXY: 3, countOffset: 0, useRadius: false },
       { func: Path.lineTo, count: 2, endXY: 3, countOffset: 0, useRadius: false },
@@ -129,12 +129,12 @@ export class Path extends RegisterableObject {
     //let a: number, b: number, c: number, d: number, e: number, f: number;
     let nb: number, start: number, val: number;
     let datas: number[] = this.datas;
-    let func: Function;
+    let func: (...arg) => void;
     let count: number, countOffset: number;
     let useRadius: boolean;
     let minRadius: number = 9999999, maxRadius: number = -999999;
     //let NB: number = 0;
-    let o: { count: number, func: Function, endXY: number, countOffset: number, useRadius: boolean };
+    let o: { count: number, func: (...arg) => void, endXY: number, countOffset: number, useRadius: boolean };
     const len: number = datas.length;
     const objByType = Path.objByType;
     //const normalizeData:number[] = datas.concat();

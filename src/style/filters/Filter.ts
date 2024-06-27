@@ -8,7 +8,7 @@ export class Filter extends DirtyEventDispatcher {
   public boundOffsetH: number = 0;
   public next: Filter = null;
 
-  protected _updateColor: Function;
+  protected _updateColor: () => void;
   protected _color: SolidColor;
   protected _offsetX: number = 0;
   protected _offsetY: number = 0;
@@ -21,10 +21,9 @@ export class Filter extends DirtyEventDispatcher {
 
 
 
-    var th = this;
-    this._updateColor = function () {
-      th.dirty = true;
-      th.applyDirty();
+    this._updateColor = () => {
+      this.dirty = true;
+      this.applyDirty();
     }
   }
 

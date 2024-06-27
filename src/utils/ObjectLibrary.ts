@@ -124,21 +124,21 @@ export class ObjectLibrary {
 
   //@ts-ignore
   public load(url: string, onLoaded?: (res: string) => void): void {
-    var th = this;
+
     this.loadObjectsByID = [];
     ObjectLibrary.creatingObjectsAfterLoad = true;
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "test.txt");
-    xhr.onreadystatechange = function () {
+    xhr.onreadystatechange = () => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         //console.log(xhr.responseText);
         //console.log("########### LOADED #####################")
         var datas = xhr.responseText;
         var t = datas.split("[####]");
-        th.names = t[0].split(",");
+        this.names = t[0].split(",");
 
-        var i: number, len: number = th.names.length;
-        for (i = 0; i < len; i++) th.objects[th.names[i]] = { type: i, elements: [] };
+        var i: number, len: number = this.names.length;
+        for (i = 0; i < len; i++) this.objects[this.names[i]] = { type: i, elements: [] };
 
         var objects = t[1].split("[#]");
         var dataString, infos;
@@ -152,27 +152,27 @@ export class ObjectLibrary {
           ID = t[0];
           infos = ID.split("_");
           classId = Number(infos[0]);
-          className = th.names[classId];
+          className = this.names[classId];
           instanceId = Number(infos[1]);
           dataString = t[1];
 
-          th.loadObjectsByID[ID] = temp[i] = { className: className, instanceId: instanceId, dataString: dataString };
+          this.loadObjectsByID[ID] = temp[i] = { className: className, instanceId: instanceId, dataString: dataString };
 
 
-          //if(!th.objects[className]) th.objects[className] = {type:classId,elements:[]};
-          //th.objects[className].elements[instanceId] = eval(className).fromDataString(dataString)
+          //if(!this.objects[className]) this.objects[className] = {type:classId,elements:[]};
+          //this.objects[className].elements[instanceId] = eval(className).fromDataString(dataString)
 
 
           //console.log(className+" : "+dataString);
-          //console.log("className => " + ID + " ==> ", th.loadObjectsByID[ID]);
+          //console.log("className => " + ID + " ==> ", this.loadObjectsByID[ID]);
         }
 
         var o;
         for (i = 0; i < len; i++) {
           o = temp[i];
           //console.log(i, o.className, o.instanceId, o.dataString)
-          th.objects[o.className].elements[o.instanceId] = ObjectLibrary.classes[o.className].fromDataString(o.dataString);
-          //th.objects[o.className].elements[o.instanceId] = eval(o.className).fromDataString(o.dataString);
+          this.objects[o.className].elements[o.instanceId] = ObjectLibrary.classes[o.className].fromDataString(o.dataString);
+          //this.objects[o.className].elements[o.instanceId] = eval(o.className).fromDataString(o.dataString);
         }
 
 

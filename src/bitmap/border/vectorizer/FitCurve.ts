@@ -6,7 +6,7 @@ export class FitCurve {
 
     }
 
-    public static borderToCurve(border: BorderPt[], maxError: number = 10, progressCallback: Function = null): number[][][] {
+    public static borderToCurve(border: BorderPt[], maxError: number = 10, progressCallback: () => void = null): number[][][] {
         var points: number[][] = [];
         var i: number, len: number = border.length;
         for (i = 0; i < len; i++) {
@@ -29,7 +29,7 @@ export class FitCurve {
     }
 
 
-    public static fitCurve(points: number[][], maxError: number = 5, progressCallback: Function = null): number[][][] {
+    public static fitCurve(points: number[][], maxError: number = 5, progressCallback: () => void = null): number[][][] {
         if (!Array.isArray(points)) {
             throw new TypeError("First argument should be an array");
         }
@@ -55,7 +55,7 @@ export class FitCurve {
         return this.fitCubic(points, leftTangent, rightTangent, maxError, progressCallback);
     }
 
-    private static fitCubic(points: number[][], leftTangent: number[], rightTangent: number[], error: number, progressCallback: Function): number[][][] {
+    private static fitCubic(points: number[][], leftTangent: number[], rightTangent: number[], error: number, progressCallback: () => void): number[][][] {
         const MaxIterations = 20;   //Max times to try iterating (to find an acceptable curve)
 
         var bezCurve,               //Control points of fitted Bezier curve
@@ -151,7 +151,7 @@ export class FitCurve {
         return beziers;
     }
 
-    private static generateAndReport(points: number[][], paramsOrig: number[], paramsPrime: number[], leftTangent: number[], rightTangent: number[], progressCallback: Function) {
+    private static generateAndReport(points: number[][], paramsOrig: number[], paramsPrime: number[], leftTangent: number[], rightTangent: number[], progressCallback: (e) => void) {
         var bezCurve: number[][], maxError: number, splitPoint: number;
 
         bezCurve = this.generateBezier(points, paramsPrime, leftTangent, rightTangent, progressCallback);
@@ -176,7 +176,7 @@ export class FitCurve {
     }
 
     //@ts-ignore
-    private static generateBezier(points: number[][], parameters: number[], leftTangent: number[], rightTangent: number[], progressCallback: Function): number[][] {
+    private static generateBezier(points: number[][], parameters: number[], leftTangent: number[], rightTangent: number[], progressCallback: (e?: any) => void): number[][] {
         var bezCurve,                       //Bezier curve ctl pts
             A, a,                           //Precomputed rhs for eqn
             C, X,                           //Matrices C & X

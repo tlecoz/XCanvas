@@ -16,36 +16,36 @@ export class MouseControler extends EventDispatcher {
     var th = this;
     var mc = this.htmlCanvas = canvas;
 
-    mc.onmouseover = function (e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.OVER);
+    mc.onmouseover = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.OVER);
     }
-    mc.onmouseout = function (e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.OUT);
+    mc.onmouseout = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.OUT);
     }
-    mc.onmousedown = function (e) {
-      th.getMouseXY(e);
-      th.isDown = true;
-      th.dispatchEvent(MouseEvents.DOWN);
+    mc.onmousedown = (e) => {
+      this.getMouseXY(e);
+      this.isDown = true;
+      this.dispatchEvent(MouseEvents.DOWN);
     }
-    mc.onmouseup = function (e) {
-      th.getMouseXY(e);
-      th.isDown = false;
-      th.dispatchEvent(MouseEvents.UP);
+    mc.onmouseup = (e) => {
+      this.getMouseXY(e);
+      this.isDown = false;
+      this.dispatchEvent(MouseEvents.UP);
     }
-    mc.onclick = function (e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.CLICK);
+    mc.onclick = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.CLICK);
     }
-    mc.ondblclick = function (e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.DOUBLE_CLICK);
+    mc.ondblclick = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.DOUBLE_CLICK);
     }
 
-    mc.onmousemove = function (e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.MOVE);
+    mc.onmousemove = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.MOVE);
     }
     /*
     (mc as any).onmousewheel = function(e){

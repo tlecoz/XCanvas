@@ -142,7 +142,7 @@ export class BitmapData extends EventDispatcher {
     var svg = new Blob([data], { type: "image/svg+xml;charset=utf-8" });
     var url = DOMURL.createObjectURL(svg);
     var context = this.context;
-    img.onload = function () {
+    img.onload = () => {
       context.drawImage(img, x, y);
       DOMURL.revokeObjectURL(url);
     };

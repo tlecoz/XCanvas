@@ -9,7 +9,7 @@ export class Img extends BitmapData {
   //private _h: number;
   private _url: string = "";
 
-  public onLoaded: Function;
+  public onLoaded: (e?: any) => void;
 
   constructor(url: string = "") {
     super();
@@ -17,12 +17,12 @@ export class Img extends BitmapData {
 
     var th = this;
     var img = this._img = document.createElement("img");
-    img.onload = function () {
-      th.width = img.width;
-      th.height = img.height;
-      th.drawImage(img, 0, 0);
-      if (th.onLoaded) th.onLoaded(img);
-      th.dispatchEvent(Img.IMAGE_LOADED);
+    img.onload = () => {
+      this.width = img.width;
+      this.height = img.height;
+      this.drawImage(img, 0, 0);
+      if (this.onLoaded) this.onLoaded(img);
+      this.dispatchEvent(Img.IMAGE_LOADED);
     }
 
     this.url = url;

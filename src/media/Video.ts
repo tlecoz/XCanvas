@@ -67,24 +67,24 @@ export class Video extends BitmapData {
     var th = this;
     var started: boolean = false;
 
-    video.onpause = function () { th.playing = false; }
-    video.onwaiting = function () { th.playing = false; }
-    video.onplay = function () { th.playing = true; }
+    video.onpause = () => { this.playing = false; }
+    video.onwaiting = () => { this.playing = false; }
+    video.onplay = () => { this.playing = true; }
 
-    video.onended = function () {
-      th.playing = false;
-      if (th.loop) video.play();
+    video.onended = () => {
+      this.playing = false;
+      if (this.loop) video.play();
     }
 
-    video.oncanplay = function () {
-      th.videoW = video.videoWidth;
-      th.videoH = video.videoHeight;
-      th.canPlay = true;
+    video.oncanplay = () => {
+      this.videoW = video.videoWidth;
+      this.videoH = video.videoHeight;
+      this.canPlay = true;
       if (!started && autoplay) {
         started = true;
         document.body.appendChild(video);
       }
-      if (!th.firstFrameRendered) th.update();
+      if (!this.firstFrameRendered) this.update();
     }
 
   }

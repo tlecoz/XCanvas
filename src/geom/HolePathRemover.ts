@@ -77,7 +77,7 @@ export class HolePathRemover {
 
         outPt.dist = dx * dx + dy * dy;
       }
-      outside = outside.sort(function (a: BorderPt, b: BorderPt) {
+      outside = outside.sort((a: BorderPt, b: BorderPt) => {
         if (a.dist > b.dist) return 1;
         if (a.dist < b.dist) return -1;
         return 0;

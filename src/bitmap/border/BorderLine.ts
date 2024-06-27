@@ -35,7 +35,7 @@ export class BorderLine {
 			pt.dist = Math.sqrt(dx * dx + dy * dy);
 		}
 		var v: BorderPt[] = this.points.concat();
-		v.sort(function (p0: BorderPt, p1: BorderPt): number {
+		v.sort((p0: BorderPt, p1: BorderPt): number => {
 			if (p0.dist < p1.dist) return -1;
 			else return 1
 		});

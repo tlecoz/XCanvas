@@ -1,5 +1,5 @@
 import { Display2D } from "../display/Display2D";
-import { EventDispatcher } from "../events/EventDispatcher";
+import { BasicEvent, EventDispatcher } from "../events/EventDispatcher";
 import { ObjectLibrary } from "../utils/ObjectLibrary";
 //import { RegisterableObject } from "../utils/RegisterableObject";
 import { SolidColor } from "./SolidColor";
@@ -19,7 +19,7 @@ export class GradientColor extends EventDispatcher {
   protected r1: number = 0;
   protected style: CanvasGradient | null = null;
   protected ctx: CanvasRenderingContext2D | null = null;
-  protected onUpdateStyle: Function | null = null;
+  protected onUpdateStyle: (e?: BasicEvent) => void | null = null;
 
   public dirty: boolean = true;
 
@@ -222,9 +222,9 @@ export class GradientColor extends EventDispatcher {
     if (!this.colors || !this.ratios) return "";
 
     if (this.colors[id] != null) {
-      this.colors[id].removeEventListener(SolidColor.UPDATE_STYLE, this.onUpdateStyle as Function);
+      this.colors[id].removeEventListener(SolidColor.UPDATE_STYLE, this.onUpdateStyle);
       this.colors[id] = color;
-      color.addEventListener(SolidColor.UPDATE_STYLE, this.onUpdateStyle as Function);
+      color.addEventListener(SolidColor.UPDATE_STYLE, this.onUpdateStyle);
 
     }
   }

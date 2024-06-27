@@ -5,6 +5,44 @@
 import { RegisterableObject } from "../utils/RegisterableObject";
 
 
+export type BasicEvent = {
+    target: EventDispatcher,
+    data?: unknown
+}
+
+
+
+
+export type EventCallback<T extends BasicEvent> = (event: T) => void;
+
+export class EventDispatcher<E extends BasicEvent = BasicEvent> extends RegisterableObject {
+
+    private listeners: { [eventName: string]: EventCallback<E>[] } = {};
+
+    public addEventListener(eventName: string, callback: EventCallback<E>) {
+        if (!this.listeners[eventName]) this.listeners[eventName] = [];
+        this.listeners[eventName].push(callback);
+    }
+
+    public removeEventListener(eventName: string, callback: EventCallback<E>) {
+        if (!this.listeners[eventName]) return;
+        const id: number = this.listeners[eventName].indexOf(callback);
+        if (id === -1) return;
+        this.listeners[eventName].splice(id, 1);
+    }
+
+    public dispatchEvent(eventName: string, data?: E["data"]) {
+        if (!this.listeners[eventName]) return;
+        const event = { target: this, data } as unknown as E;
+        this.listeners[eventName].forEach(callback => callback(event));
+    }
+
+    public clearEvents(): void {
+        this.listeners = {};
+    }
+}
+
+/*
 export class EventDispatcher extends RegisterableObject {
 
     public customData: any;
@@ -38,7 +76,9 @@ export class EventDispatcher extends RegisterableObject {
         }
 
         if (overrideExistingEventIfExists) this.___dispatcherFunctionById[nameId] = [func];
-        else this.___dispatcherFunctionById[nameId].push(func);
+        else {
+            if (func) this.___dispatcherFunctionById[nameId].push(func);
+        }
 
     }
 
@@ -77,6 +117,7 @@ export class EventDispatcher extends RegisterableObject {
             if (this.___dispatcherActifById[i] == true) {
                 this.___dispatcherActifById[i] = false;
                 funcs = this.___dispatcherFunctionById[i];
+                console.log("funcs = ", funcs.length)
                 if (funcs) {
                     len2 = funcs.length;
                     for (j = 0; j < len2; j++) funcs[j](this, object, this.___dispatcherNames[i]);
@@ -96,3 +137,4 @@ export class EventDispatcher extends RegisterableObject {
     }
 
 }
+    */
