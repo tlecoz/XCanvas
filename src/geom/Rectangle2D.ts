@@ -21,6 +21,7 @@ export class Rectangle2D {
   }
 
   public add(r: Rectangle2D) {
+
     if (r.maxX > this.maxX) this.maxX = r.maxX;
     if (r.maxY > this.maxY) this.maxY = r.maxY;
     if (r.minX < this.minX) this.minX = r.minX;

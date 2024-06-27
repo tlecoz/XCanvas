@@ -56,7 +56,7 @@ export class Display2D extends Matrix2D {
 
   public currentTransform: DOMMatrix | null = null;
 
-  protected _bounds: Rectangle2D;
+  protected _bounds: Rectangle2D = new Rectangle2D();
   private _display2dName: string
 
 
@@ -65,7 +65,7 @@ export class Display2D extends Matrix2D {
   //public axis: Pt2D;// = Align.TOP_LEFT;
   //protected _axis: Pt2D;
 
-  protected waitingBound: boolean = false;
+  protected waitingBound: boolean = true;
 
   constructor(w: number, h: number, renderStack?: RenderStack) {
     super();
@@ -77,21 +77,20 @@ export class Display2D extends Matrix2D {
     if (!renderStack) this.renderStack = new RenderStack();
     else this.renderStack = renderStack;
 
-    this._bounds = new Rectangle2D(0, 0, w, h);
+    this._bounds;// = new Rectangle2D(0, 0, w, h);
     this.cache = new BitmapCache(this);
 
-    this.addEventListener("ADDED_TO_STAGE", () => {
 
-
+    /*this.addEventListener("ADDED_TO_STAGE", () => {
 
       const onFirstFrame = () => {
-        this.updateBounds();
+        //this.updateBounds();
 
         this.stage.removeEventListener("DRAW_BEGIN", onFirstFrame);
       }
       this.stage.addEventListener("DRAW_BEGIN", onFirstFrame);
 
-    })
+    })*/
 
 
   }
@@ -160,16 +159,45 @@ export class Display2D extends Matrix2D {
   public updateBounds(): Rectangle2D {
     if (!this.axis) {
       this.waitingBound = true;
-      return;
+      return undefined;
     }
+
+
 
     const frameId = this.stage.frameId;
     if (this.boundFrameId == frameId) return this._bounds;
 
 
-    this.waitingBound = false;
+
     this.boundFrameId = frameId;
-    return this.renderStack.updateBounds(this);
+    this.waitingBound = false;
+
+    const bool = this.bounds.width == 1 && this.bounds.height == 1;
+
+    const b = this.renderStack.updateBounds(this);
+    if (!b || b.width == 1 && b.height == 1) {
+      this.waitingBound = true;
+      return;
+    }
+
+    if (bool) {
+
+      console.log(b.width * this.axis.x, b.height * this.axis.y)
+
+      const bw = b.width;
+      const bh = b.height;
+
+      b.minX -= this.axis.x * bw;
+      b.minY -= this.axis.y * bh;
+      b.maxX -= this.axis.x * bw;
+      b.maxY -= this.axis.y * bh;
+
+      console.log(b)
+    }
+
+
+
+    return b;
   }
 
 

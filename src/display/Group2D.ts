@@ -84,8 +84,14 @@ export class Group2D extends Display2D {
   }
 
   public updateBounds(): Rectangle2D {
+    const frameId = this.stage.frameId;
 
     if (this.children.length == 0) {
+      this.waitingBound = true;
+      return this._bounds;
+    }
+
+    if (this.boundFrameId == frameId || !this.axis) {
       this.waitingBound = true;
       return this._bounds;
     }
@@ -98,19 +104,27 @@ export class Group2D extends Display2D {
     }
 
 
-    const frameId = this.stage.frameId;
+
+
     //console.log("frameId = ", frameId, this.boundFrameId)
 
-    if (this.boundFrameId == frameId) {
-      this.waitingBound = true;
-      return this._bounds;
-    }
+
     this.boundFrameId = frameId;
     //console.log("UB")
+    if (!this._bounds) this._bounds = new Rectangle2D(9999999, 9999999, -9999999, -9999999)
+    else this._bounds.init(9999999, 9999999, -9999999, -9999999);
 
-    this._bounds.init(9999999, 9999999, -9999999, -9999999)
     for (let i = 0; i < this.children.length; i++) {
-      this._bounds.add(this.children[i].updateBounds());
+      const b = this.children[i].updateBounds()
+
+      if (b) {
+        //console.log(b)
+        this._bounds.add(b);
+      } else {
+        this._bounds = undefined;
+        this.waitingBound = true;
+        return;
+      }
     }
 
 
@@ -120,12 +134,13 @@ export class Group2D extends Display2D {
 
     //console.log(pt);
 
-    this.bounds.minX -= pt.x;
-    this.bounds.minY -= pt.y;
-    this.bounds.maxX -= pt.x;
-    this.bounds.maxY -= pt.y;
 
-    this.waitingBound = this.bounds.width == 1 && this.bounds.height == 1;
+    this._bounds.minX -= pt.x;
+    this._bounds.minY -= pt.y;
+    this._bounds.maxX -= pt.x;
+    this._bounds.maxY -= pt.y;
+
+    this.waitingBound = this._bounds.width == 1 && this._bounds.height == 1;
 
     return this._bounds;
   }
@@ -180,9 +195,9 @@ export class Group2D extends Display2D {
       this.updateBounds();
     }
 
-    if (this.axis) {
+    if (this.axis && this.bounds) {
 
-      //console.log(this.bounds.width)
+      //if (this.constructor.name == "Group2D") console.log("b=", this.bounds)
 
       this.xAxis = this.bounds.width * this.axis.x / this.scaleX;
       this.yAxis = this.bounds.height * this.axis.y / this.scaleY;

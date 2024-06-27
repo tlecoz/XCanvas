@@ -38,6 +38,7 @@ export class Geometry {
   public get triangleIndexs(): any { return this._indexs; }
 
   public getBounds(target: Display2D, offsetW: number, offsetH: number): Rectangle2D {
+
     let p: any = this.firstPoint;
     let trans: DOMPoint;
     let tx: number, ty: number;
@@ -53,6 +54,7 @@ export class Geometry {
     let oy: number = offsetH;
 
 
+
     while (p) {
       trans = m.transformPoint(p);
       tx = trans.x;
@@ -61,9 +63,17 @@ export class Geometry {
       if (tx > maxX) maxX = tx;
       if (ty < minY) minY = ty;
       if (ty > maxY) maxY = ty;
+
+      //console.log(target.axis, tx, ty)
+
       p = p.next;
 
     }
+
+
+
+
+
 
     return target.bounds.init(minX - ox, minY - oy, maxX + ox, maxY + oy);
   }
