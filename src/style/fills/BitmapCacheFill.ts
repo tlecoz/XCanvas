@@ -12,9 +12,12 @@ export class BitmapCacheFill extends FillStroke {
     super();
     this.bd = bd;
     this.styleType = "fillStyle";
-
-
   }
+
+  public clone(): BitmapCacheFill {
+    return new BitmapCacheFill(this.bd.clone())
+  }
+
   public get width(): number { return this.bd.width }
   public get height(): number { return this.bd.height }
 

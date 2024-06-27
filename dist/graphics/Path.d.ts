@@ -4,7 +4,7 @@ import { Geometry } from './Geometry';
 export declare class Path extends RegisterableObject {
     static objByType: {
         count: number;
-        func: Function;
+        func: (...arg: any[]) => void;
         endXY: number;
         countOffset: number;
         useRadius: boolean;

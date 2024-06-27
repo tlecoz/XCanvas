@@ -15,7 +15,7 @@ export declare class Pattern extends FillStroke {
     protected targetH: number;
     protected imageBmp: ImageBitmap;
     protected rotationInDegree: number;
-    onImageLoaded: Function;
+    onImageLoaded: (e: any) => void;
     private _crop;
     private _applyTargetScale;
     constructor(source: BitmapData, crop?: boolean, applyTargetScale?: boolean);

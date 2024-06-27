@@ -1,5 +1,4 @@
 import { EventDispatcher } from "../events/EventDispatcher";
-import { Align } from "./Align";
 import { Pt2D } from "./Pt2D";
 
 export class Matrix2D extends EventDispatcher {

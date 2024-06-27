@@ -22,6 +22,8 @@ export class BitmapFill extends FillStroke {
 
   }
 
+
+
   public get dataString(): string {
     var centerInto: number = 0;
     if (this.centerInto) centerInto = 1;
@@ -34,7 +36,7 @@ export class BitmapFill extends FillStroke {
 
 
 
-  public clone(cloneMedia: boolean = false, cloneLineStyle: boolean = true): BitmapFill {
+  public clone(cloneMedia: boolean = true, cloneLineStyle: boolean = true): BitmapFill {
     var o: BitmapFill;
     if (cloneMedia) o = new BitmapFill(this.bd.clone());
     else o = new BitmapFill(this.bd);

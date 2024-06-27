@@ -119,7 +119,7 @@ export class RenderStackElement extends RegisterableObject {
 
 
   public clone(): RenderStackElement {
-    var o: RenderStackElement = new RenderStackElement(this.value, this.mouseEnabled);
+    var o: RenderStackElement = new RenderStackElement(this.value.clone(), this.mouseEnabled);
     o.init(this.lastPath, this.lastFillStroke);
     return o;
   }

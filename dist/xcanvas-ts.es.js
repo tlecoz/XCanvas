@@ -99,18 +99,17 @@ const _ObjectLibrary = class _ObjectLibrary {
   }
   //@ts-ignore
   load(url, onLoaded) {
-    var th = this;
     this.loadObjectsByID = [];
     _ObjectLibrary.creatingObjectsAfterLoad = true;
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "test.txt");
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = () => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         var datas = xhr.responseText;
         var t = datas.split("[####]");
-        th.names = t[0].split(",");
-        var i, len = th.names.length;
-        for (i = 0; i < len; i++) th.objects[th.names[i]] = { type: i, elements: [] };
+        this.names = t[0].split(",");
+        var i, len = this.names.length;
+        for (i = 0; i < len; i++) this.objects[this.names[i]] = { type: i, elements: [] };
         var objects = t[1].split("[#]");
         var dataString, infos;
         var className;
@@ -122,15 +121,15 @@ const _ObjectLibrary = class _ObjectLibrary {
           ID = t[0];
           infos = ID.split("_");
           classId = Number(infos[0]);
-          className = th.names[classId];
+          className = this.names[classId];
           instanceId = Number(infos[1]);
           dataString = t[1];
-          th.loadObjectsByID[ID] = temp[i] = { className, instanceId, dataString };
+          this.loadObjectsByID[ID] = temp[i] = { className, instanceId, dataString };
         }
         var o;
         for (i = 0; i < len; i++) {
           o = temp[i];
-          th.objects[o.className].elements[o.instanceId] = _ObjectLibrary.classes[o.className].fromDataString(o.dataString);
+          this.objects[o.className].elements[o.instanceId] = _ObjectLibrary.classes[o.className].fromDataString(o.dataString);
         }
         _ObjectLibrary.creatingObjectsAfterLoad = false;
         if (onLoaded) onLoaded(xhr.responseText);
@@ -194,72 +193,26 @@ class RegisterableObject {
 }
 class EventDispatcher extends RegisterableObject {
   constructor() {
-    super();
-    __publicField(this, "customData");
-    __publicField(this, "___dispatcherNames");
-    __publicField(this, "___nbDispatcher");
-    __publicField(this, "___dispatcherActifById");
-    __publicField(this, "___dispatcherFunctionById");
-    this.customData = {};
-    this.___dispatcherNames = [];
-    this.___nbDispatcher = 0;
-    this.___dispatcherActifById = [];
-    this.___dispatcherFunctionById = [];
+    super(...arguments);
+    __publicField(this, "listeners", {});
   }
-  addEventListener(name, func, overrideExistingEventIfExists = false) {
-    if (name == void 0 || func == void 0) return;
-    var nameId = this.___dispatcherNames.indexOf(name);
-    if (nameId == -1) {
-      this.___dispatcherActifById[this.___nbDispatcher] = false;
-      this.___dispatcherFunctionById[this.___nbDispatcher] = [];
-      nameId = this.___nbDispatcher;
-      this.___dispatcherNames[this.___nbDispatcher++] = name;
-    }
-    if (overrideExistingEventIfExists) this.___dispatcherFunctionById[nameId] = [func];
-    else this.___dispatcherFunctionById[nameId].push(func);
+  addEventListener(eventName, callback) {
+    if (!this.listeners[eventName]) this.listeners[eventName] = [];
+    this.listeners[eventName].push(callback);
+  }
+  removeEventListener(eventName, callback) {
+    if (!this.listeners[eventName]) return;
+    const id = this.listeners[eventName].indexOf(callback);
+    if (id === -1) return;
+    this.listeners[eventName].splice(id, 1);
+  }
+  dispatchEvent(eventName, data) {
+    if (!this.listeners[eventName]) return;
+    const event = { target: this, data };
+    this.listeners[eventName].forEach((callback) => callback(event));
   }
   clearEvents() {
-    this.___dispatcherNames = [];
-    this.___nbDispatcher = 0;
-    this.___dispatcherActifById = [];
-    this.___dispatcherFunctionById = [];
-  }
-  removeEventListener(name, func) {
-    var id = this.___dispatcherNames.indexOf(name);
-    if (id == -1) return;
-    if (!func) {
-      this.___dispatcherFunctionById[id] = [];
-      return;
-    }
-    var functions = this.___dispatcherFunctionById[id];
-    var id2 = functions.indexOf(func);
-    if (id2 == -1) return;
-    functions.splice(id2, 1);
-  }
-  applyEvents(object = null) {
-    var len = this.___dispatcherNames.length;
-    if (0 == len) return;
-    var i, j, len2;
-    var funcs;
-    for (i = 0; i < len; i++) {
-      if (this.___dispatcherActifById[i] == true) {
-        this.___dispatcherActifById[i] = false;
-        funcs = this.___dispatcherFunctionById[i];
-        if (funcs) {
-          len2 = funcs.length;
-          for (j = 0; j < len2; j++) funcs[j](this, object, this.___dispatcherNames[i]);
-        } else {
-          console.warn("EventDispatcher.applyEvents bug ? -> ", this.___dispatcherNames[i]);
-        }
-      }
-    }
-  }
-  dispatchEvent(eventName) {
-    if (!this.___dispatcherNames) return;
-    var id = this.___dispatcherNames.indexOf(eventName);
-    if (id == -1) return;
-    this.___dispatcherActifById[id] = true;
-    this.applyEvents(this);
+    this.listeners = {};
   }
 }
 class Rectangle2D {
@@ -276,6 +229,12 @@ class Rectangle2D {
     this.maxX = maxX;
     this.maxY = maxY;
     return this;
+  }
+  add(r) {
+    if (r.maxX > this.maxX) this.maxX = r.maxX;
+    if (r.maxY > this.maxY) this.maxY = r.maxY;
+    if (r.minX < this.minX) this.minX = r.minX;
+    if (r.minY < this.minY) this.minY = r.minY;
   }
   get x() {
     return this.minX;
@@ -525,7 +484,7 @@ const _BitmapData = class _BitmapData extends EventDispatcher {
     var svg = new Blob([data], { type: "image/svg+xml;charset=utf-8" });
     var url = DOMURL.createObjectURL(svg);
     var context = this.context;
-    img.onload = function() {
+    img.onload = () => {
       context.drawImage(img, x, y);
       DOMURL.revokeObjectURL(url);
     };
@@ -1097,7 +1056,7 @@ __publicField(GlobalCompositeOperations, "HARD_LIGHT", "hard-light");
 __publicField(GlobalCompositeOperations, "SOFT_LIGHT", "soft-light");
 __publicField(GlobalCompositeOperations, "COPY", "copy");
 __publicField(GlobalCompositeOperations, "XOR", "xor");
-__publicField(GlobalCompositeOperations, "MULTIPLY", "mutiply");
+__publicField(GlobalCompositeOperations, "MULTIPLY", "multiply");
 __publicField(GlobalCompositeOperations, "SCREEN", "screen");
 __publicField(GlobalCompositeOperations, "COLOR_DODGE", "color-dodge");
 __publicField(GlobalCompositeOperations, "COLOR_BURN", "color-burn");
@@ -1506,6 +1465,9 @@ const _Pt2D = class _Pt2D {
     this.y = y;
     this.isCurveAnchor = isCurveAnchor;
   }
+  clone() {
+    return new _Pt2D(this.x, this.y, this.isCurveAnchor);
+  }
   equals(pt) {
     return this.x == pt.x && this.y == pt.y;
   }
@@ -1869,11 +1831,6 @@ const _BorderVectorizer = class _BorderVectorizer {
     var multi;
     var nbRemove = 0;
     for (i = 2; i < this.points.length - 1; i += 2) {
-      let sortFunc = function(a2, b) {
-        if (a2.d > b.d) return 1;
-        if (a2.d < b.d) return -1;
-        return 0;
-      };
       p1 = this.points[i - 2];
       p2 = this.points[i - 1];
       p3 = this.points[i];
@@ -1905,6 +1862,11 @@ const _BorderVectorizer = class _BorderVectorizer {
       dy = p3.y - p1.y;
       o31.d = Math.sqrt(dx * dx + dy * dy) * multi >> 0;
       o31.a = Math.atan2(dy, dx);
+      const sortFunc = (a2, b) => {
+        if (a2.d > b.d) return 1;
+        if (a2.d < b.d) return -1;
+        return 0;
+      };
       linePoints = linePoints.sort(sortFunc);
       var hypothenus = linePoints[2];
       center = hypothenus.p1;
@@ -2801,7 +2763,7 @@ class BorderLine {
       pt.dist = Math.sqrt(dx * dx + dy * dy);
     }
     var v = this.points.concat();
-    v.sort(function(p0, p1) {
+    v.sort((p0, p1) => {
       if (p0.dist < p1.dist) return -1;
       else return 1;
     });
@@ -2936,7 +2898,7 @@ const _SolidColor = class _SolidColor extends EventDispatcher {
     __publicField(this, "_b");
     __publicField(this, "_a");
     __publicField(this, "_style");
-    __publicField(this, "useAlpha", false);
+    __publicField(this, "useAlpha", true);
     var red = void 0;
     if (g == -1) {
       if (typeof r == "string") {
@@ -3322,17 +3284,17 @@ class KeyboardControler extends EventDispatcher {
     this.isDown = [];
     for (var i = 0; i < 222; i++) this.isDown[i] = false;
     var th = this;
-    document.addEventListener("keydown", function(e) {
-      th.keyCode = e.keyCode;
-      th.isDown[th.keyCode] = true;
-      th.dispatchEvent(KeyboardEvents.KEY_DOWN);
-      th.dispatchEvent(KeyboardEvents.CHANGED);
+    document.addEventListener("keydown", (e) => {
+      this.keyCode = e.keyCode;
+      this.isDown[th.keyCode] = true;
+      this.dispatchEvent(KeyboardEvents.KEY_DOWN);
+      this.dispatchEvent(KeyboardEvents.CHANGED);
     });
-    document.addEventListener("keyup", function(e) {
-      th.keyCode = e.keyCode;
-      th.isDown[th.keyCode] = false;
-      th.dispatchEvent(KeyboardEvents.KEY_DOWN);
-      th.dispatchEvent(KeyboardEvents.CHANGED);
+    document.addEventListener("keyup", (e) => {
+      this.keyCode = e.keyCode;
+      this.isDown[th.keyCode] = false;
+      this.dispatchEvent(KeyboardEvents.KEY_DOWN);
+      this.dispatchEvent(KeyboardEvents.CHANGED);
     });
   }
   keyIsDown(keyCode) {
@@ -3357,37 +3319,36 @@ class MouseControler extends EventDispatcher {
     __publicField(this, "y", 0);
     __publicField(this, "isDown", false);
     __publicField(this, "htmlCanvas");
-    var th = this;
     var mc = this.htmlCanvas = canvas;
-    mc.onmouseover = function(e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.OVER);
+    mc.onmouseover = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.OVER);
     };
-    mc.onmouseout = function(e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.OUT);
+    mc.onmouseout = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.OUT);
     };
-    mc.onmousedown = function(e) {
-      th.getMouseXY(e);
-      th.isDown = true;
-      th.dispatchEvent(MouseEvents.DOWN);
+    mc.onmousedown = (e) => {
+      this.getMouseXY(e);
+      this.isDown = true;
+      this.dispatchEvent(MouseEvents.DOWN);
     };
-    mc.onmouseup = function(e) {
-      th.getMouseXY(e);
-      th.isDown = false;
-      th.dispatchEvent(MouseEvents.UP);
+    mc.onmouseup = (e) => {
+      this.getMouseXY(e);
+      this.isDown = false;
+      this.dispatchEvent(MouseEvents.UP);
     };
-    mc.onclick = function(e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.CLICK);
+    mc.onclick = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.CLICK);
     };
-    mc.ondblclick = function(e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.DOUBLE_CLICK);
+    mc.ondblclick = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.DOUBLE_CLICK);
     };
-    mc.onmousemove = function(e) {
-      th.getMouseXY(e);
-      th.dispatchEvent(MouseEvents.MOVE);
+    mc.onmousemove = (e) => {
+      this.getMouseXY(e);
+      this.dispatchEvent(MouseEvents.MOVE);
     };
   }
   down(x, y) {
@@ -3531,8 +3492,7 @@ class TouchControler extends EventDispatcher {
     __publicField(this, "htmlCanvas");
     this.mouse = mouseControler;
     this.htmlCanvas = htmlCanvas;
-    var th = this;
-    htmlCanvas.addEventListener("touchstart", function(e) {
+    htmlCanvas.addEventListener("touchstart", (e) => {
       e.preventDefault();
       var t = e.changedTouches;
       var touch;
@@ -3541,26 +3501,26 @@ class TouchControler extends EventDispatcher {
       for (i = 0; i < len; i++) {
         touch = t[i];
         touchId = touch.identifier;
-        th.touchX = touch.pageX;
-        th.touchY = touch.pageY;
-        if (void 0 == th.touches[touchId]) th.touches[touchId] = th.lastTouch = new Touche();
-        else th.lastTouch = th.touches[touchId];
-        th.lastTouch.start(th.touchX, th.touchY);
-        if (th.nbTouch == 0) {
-          th.lastTouch.firstPoint = true;
-          th.firstPoint = th.lastTouch;
-        } else if (th.nbTouch == 1) {
-          th.initSecondPoint(th.lastTouch);
+        this.touchX = touch.pageX;
+        this.touchY = touch.pageY;
+        if (void 0 == this.touches[touchId]) this.touches[touchId] = this.lastTouch = new Touche();
+        else this.lastTouch = this.touches[touchId];
+        this.lastTouch.start(this.touchX, this.touchY);
+        if (this.nbTouch == 0) {
+          this.lastTouch.firstPoint = true;
+          this.firstPoint = this.lastTouch;
+        } else if (this.nbTouch == 1) {
+          this.initSecondPoint(this.lastTouch);
         }
-        th.actifPoints[th.nbTouch++] = th.lastTouch;
-        th.dispatchEvent(TouchEvents.ADD_ONE_TOUCH);
-        if (true == th.lastTouch.firstPoint) {
-          th.dispatchEvent(TouchEvents.START);
-          th.mouse.down(th.touchX, th.touchY);
+        this.actifPoints[this.nbTouch++] = this.lastTouch;
+        this.dispatchEvent(TouchEvents.ADD_ONE_TOUCH);
+        if (true == this.lastTouch.firstPoint) {
+          this.dispatchEvent(TouchEvents.START);
+          this.mouse.down(this.touchX, this.touchY);
         }
       }
     }, false);
-    function touchEnd(e) {
+    const touchEnd = (e) => {
       e.preventDefault();
       var t = e.changedTouches;
       var touch;
@@ -3573,45 +3533,45 @@ class TouchControler extends EventDispatcher {
         touchId = touch.identifier;
         if (touchId == oldTouchId) continue;
         oldTouchId = touchId;
-        th.touchX = touch.pageX;
-        th.touchY = touch.pageY;
-        lastTouch = th.touches[touchId];
+        this.touchX = touch.pageX;
+        this.touchY = touch.pageY;
+        lastTouch = this.touches[touchId];
         lastTouch.end(lastTouch.x, lastTouch.y);
-        th.nbTouch--;
-        th.dispatchEvent(TouchEvents.LOSE_ONE_TOUCH);
-        th.actifPoints.splice(th.actifPoints.lastIndexOf(lastTouch), 1);
+        this.nbTouch--;
+        this.dispatchEvent(TouchEvents.LOSE_ONE_TOUCH);
+        this.actifPoints.splice(this.actifPoints.lastIndexOf(lastTouch), 1);
         if (lastTouch.firstPoint == true) {
           lastTouch.firstPoint = false;
-          th.dispatchEvent(TouchEvents.END);
-          th.mouse.up(lastTouch.x, lastTouch.y);
+          this.dispatchEvent(TouchEvents.END);
+          this.mouse.up(lastTouch.x, lastTouch.y);
           var time = (/* @__PURE__ */ new Date()).getTime();
-          if (lastTouch.lifeTime < th.tapTimeLimit) {
-            if (time - th.lastTapTime < th.doubleTimeLimit) {
-              th.dispatchEvent(TouchEvents.DOUBLE_TAP);
-              th.mouse.doubleClick(th.touchX, th.touchY);
-              th.lastTapTime = 0;
+          if (lastTouch.lifeTime < this.tapTimeLimit) {
+            if (time - this.lastTapTime < this.doubleTimeLimit) {
+              this.dispatchEvent(TouchEvents.DOUBLE_TAP);
+              this.mouse.doubleClick(this.touchX, this.touchY);
+              this.lastTapTime = 0;
             } else {
-              th.dispatchEvent(TouchEvents.TAP);
-              th.mouse.click(lastTouch.x, lastTouch.y);
-              th.lastTapTime = time;
+              this.dispatchEvent(TouchEvents.TAP);
+              this.mouse.click(lastTouch.x, lastTouch.y);
+              this.lastTapTime = time;
             }
           } else {
-            if (lastTouch.lifeTime > 80 && lastTouch.lifeTime < th.swipeTimeLimit) {
+            if (lastTouch.lifeTime > 80 && lastTouch.lifeTime < this.swipeTimeLimit) {
               var swipeId = lastTouch.swipeId;
               if (swipeId >= 0) {
-                if (0 == swipeId) th.dispatchEvent(TouchEvents.SWIPE_RIGHT);
-                else if (1 == swipeId) th.dispatchEvent(TouchEvents.SWIPE_DOWN);
-                else if (2 == swipeId) th.dispatchEvent(TouchEvents.SWIPE_LEFT);
-                else if (3 == swipeId) th.dispatchEvent(TouchEvents.SWIPE_UP);
+                if (0 == swipeId) this.dispatchEvent(TouchEvents.SWIPE_RIGHT);
+                else if (1 == swipeId) this.dispatchEvent(TouchEvents.SWIPE_DOWN);
+                else if (2 == swipeId) this.dispatchEvent(TouchEvents.SWIPE_LEFT);
+                else if (3 == swipeId) this.dispatchEvent(TouchEvents.SWIPE_UP);
               }
             }
           }
         }
       }
-    }
+    };
     htmlCanvas.addEventListener("touchend", touchEnd, false);
     htmlCanvas.addEventListener("touchleave", touchEnd, false);
-    htmlCanvas.addEventListener("touchmove", function(e) {
+    htmlCanvas.addEventListener("touchmove", (e) => {
       e.preventDefault();
       var t = e.changedTouches;
       var touch;
@@ -3621,23 +3581,23 @@ class TouchControler extends EventDispatcher {
       for (i = 0; i < len; i++) {
         touch = t[i];
         touchId = touch.identifier;
-        th.touchX = touch.pageX;
-        th.touchY = touch.pageY;
-        lastTouch = th.touches[touchId];
-        lastTouch.move(th.touchX, th.touchY);
-        th.dispatchEvent(TouchEvents.MOVE_ONE_TOUCH);
+        this.touchX = touch.pageX;
+        this.touchY = touch.pageY;
+        lastTouch = this.touches[touchId];
+        lastTouch.move(this.touchX, this.touchY);
+        this.dispatchEvent(TouchEvents.MOVE_ONE_TOUCH);
         if (lastTouch.firstPoint == true) {
-          th.dispatchEvent(TouchEvents.MOVE);
-          th.mouse.move(th.touchX, th.touchY);
+          this.dispatchEvent(TouchEvents.MOVE);
+          this.mouse.move(this.touchX, this.touchY);
         }
-        if (th.nbTouch >= 2) {
-          var dx = th.secondPoint.x - th.firstPoint.x;
-          var dy = th.secondPoint.y - th.firstPoint.y;
+        if (this.nbTouch >= 2) {
+          var dx = this.secondPoint.x - this.firstPoint.x;
+          var dy = this.secondPoint.y - this.firstPoint.y;
           var d = Math.sqrt(dx * dx + dy * dy);
           var a = Math.atan2(dy, dx);
-          th.zoom = d / th.startDist;
-          th.rotation = a - th.startAngle;
-          th.dispatchEvent(TouchEvents.ZOOM_AND_ROTATE);
+          this.zoom = d / this.startDist;
+          this.rotation = a - this.startAngle;
+          this.dispatchEvent(TouchEvents.ZOOM_AND_ROTATE);
         }
       }
     }, false);
@@ -3914,6 +3874,8 @@ const _Matrix2D = class _Matrix2D extends EventDispatcher {
     __publicField(this, "y", 0);
     __publicField(this, "xAxis", 0);
     __publicField(this, "yAxis", 0);
+    __publicField(this, "axis");
+    // = Align.TOP_LEFT.clone();
     __publicField(this, "rotation", 0);
     __publicField(this, "scaleX", 1);
     __publicField(this, "scaleY", 1);
@@ -3923,6 +3885,7 @@ const _Matrix2D = class _Matrix2D extends EventDispatcher {
     __publicField(this, "offsetH", 0);
     __publicField(this, "matrix");
     __publicField(this, "savedMatrixs");
+    __publicField(this, "debug", false);
     this.savedMatrixs = [];
     this.matrix = new DOMMatrix();
   }
@@ -4467,18 +4430,16 @@ class Gradient extends FillStroke {
   }
 }
 class GradientFill extends Gradient {
-  constructor(gradient, isLinear = true) {
-    super(gradient, isLinear);
+  constructor(gradient) {
+    super(gradient);
     this.styleType = "fillStyle";
   }
   get dataString() {
-    var linear = 0;
-    if (this.isLinear) linear = 1;
-    return this.gradient.REGISTER_ID + "," + linear;
+    return this.gradient.REGISTER_ID;
   }
   static fromDataString(data) {
     var t = data.split(",");
-    return new GradientFill(ObjectLibrary.instance.getObjectByRegisterId(t[0]), t[1] == "1");
+    return new GradientFill(ObjectLibrary.instance.getObjectByRegisterId(t[0]));
   }
   apply(context, path, target) {
     super.apply(context, path, target);
@@ -4514,30 +4475,29 @@ class Video extends BitmapData {
     video.autoplay = autoplay;
     video.src = this.url = url;
     this.useNativeBitmapData = true;
-    var th = this;
     var started = false;
-    video.onpause = function() {
-      th.playing = false;
+    video.onpause = () => {
+      this.playing = false;
     };
-    video.onwaiting = function() {
-      th.playing = false;
+    video.onwaiting = () => {
+      this.playing = false;
     };
-    video.onplay = function() {
-      th.playing = true;
+    video.onplay = () => {
+      this.playing = true;
     };
-    video.onended = function() {
-      th.playing = false;
-      if (th.loop) video.play();
+    video.onended = () => {
+      this.playing = false;
+      if (this.loop) video.play();
     };
-    video.oncanplay = function() {
-      th.videoW = video.videoWidth;
-      th.videoH = video.videoHeight;
-      th.canPlay = true;
+    video.oncanplay = () => {
+      this.videoW = video.videoWidth;
+      this.videoH = video.videoHeight;
+      this.canPlay = true;
       if (!started && autoplay) {
         started = true;
         document.body.appendChild(video);
       }
-      if (!th.firstFrameRendered) th.update();
+      if (!this.firstFrameRendered) this.update();
     };
   }
   get dataString() {
@@ -4675,10 +4635,9 @@ class Pattern extends FillStroke {
     __publicField(this, "_crop", true);
     __publicField(this, "_applyTargetScale", false);
     this.source = source;
-    var th = this;
-    this.onImageLoaded = function(e) {
-      th.imageBmp = null;
-      th.dirty = th.dirtyMatrix = true;
+    this.onImageLoaded = (e) => {
+      this.imageBmp = null;
+      this.dirty = this.dirtyMatrix = true;
     };
     source.addEventListener(BitmapData.IMAGE_LOADED, this.onImageLoaded);
     this.canvas = source.htmlCanvas;
@@ -5258,8 +5217,10 @@ class Shape extends RegisterableObject {
     context.translate(this.x * target.inverseW, this.y * target.inverseH);
     context.scale(this.w / target.width, this.h / target.height);
     var b;
-    if (target.mouseEnabled) b = this.renderStack.updateWithHitTest(context, target, mouseX, mouseY, true);
-    else {
+    if (target.mouseEnabled) {
+      b = this.renderStack.updateWithHitTest(context, target, mouseX, mouseY, true);
+      console.log("hit = ", b);
+    } else {
       b = this.renderStack.update(context, target, true);
     }
     context.restore();
@@ -5327,7 +5288,7 @@ class RenderStackElement extends RegisterableObject {
   }
 }
 class RenderStack extends RegisterableObject {
-  constructor() {
+  constructor(elements) {
     super();
     __publicField(this, "lastPath");
     __publicField(this, "lastFillStroke");
@@ -5336,6 +5297,9 @@ class RenderStack extends RegisterableObject {
     __publicField(this, "offsetH", 0);
     __publicField(this, "mouse");
     this._elements = [];
+    if (elements) elements.forEach((e) => {
+      this.push(e);
+    });
   }
   get dataString() {
     var s = "";
@@ -5515,7 +5479,9 @@ class RenderStack extends RegisterableObject {
         }
       }
     }
+    if (!path || !path.geometry) return void 0;
     var r = path.geometry.getBounds(target, (offsetW + lineW) * Math.sqrt(2), (offsetH + lineW) * Math.sqrt(2));
+    console.log("r = ", r);
     this.offsetW = lineW + offsetW * (Math.sqrt(2) + 1);
     this.offsetH = lineW + offsetH * (Math.sqrt(2) + 1);
     return r;
@@ -5562,7 +5528,12 @@ const _Display2D = class _Display2D extends Matrix2D {
     __publicField(this, "render", null);
     __publicField(this, "currentTransform", null);
     __publicField(this, "_bounds");
+    // = new Rectangle2D();
     __publicField(this, "_display2dName");
+    __publicField(this, "boundFrameId", -1);
+    //public axis: Pt2D;// = Align.TOP_LEFT;
+    //protected _axis: Pt2D;
+    __publicField(this, "waitingBound", true);
     this._display2dName = "o" + _Display2D.display2dIndex++;
     this.width = w;
     this.height = h;
@@ -5613,15 +5584,46 @@ const _Display2D = class _Display2D extends Matrix2D {
   }
   setStage(stage) {
     this._stage = stage;
-    if (stage) this.mouse = stage.mouseControler;
-    else this.mouse = null;
+    if (stage) {
+      this.dispatchEvent(_Display2D.ADDED_TO_STAGE);
+      this.mouse = stage.mouseControler;
+    } else {
+      this.dispatchEvent(_Display2D.REMOVED_FROM_STAGE);
+      this.mouse = null;
+    }
   }
   get stage() {
     return this._stage;
   }
   align(displayAlign = Align.CENTER) {
-    this.xAxis = this.width * displayAlign.x;
-    this.yAxis = this.height * displayAlign.y;
+    this.axis = displayAlign.clone();
+  }
+  updateBounds() {
+    if (!this.axis) {
+      this.waitingBound = true;
+      return void 0;
+    }
+    const frameId = this.stage.frameId;
+    if (this.boundFrameId == frameId) return this._bounds;
+    this.boundFrameId = frameId;
+    this.waitingBound = false;
+    const bool = this.bounds.width == 1 && this.bounds.height == 1;
+    const b = this.renderStack.updateBounds(this);
+    if (!b || b.width == 1 && b.height == 1) {
+      this.waitingBound = true;
+      return;
+    }
+    if (bool) {
+      console.log(b.width * this.axis.x, b.height * this.axis.y);
+      const bw = b.width;
+      const bh = b.height;
+      b.minX -= this.axis.x * bw;
+      b.minY -= this.axis.y * bh;
+      b.maxX -= this.axis.x * bw;
+      b.maxY -= this.axis.y * bh;
+      console.log(b);
+    }
+    return b;
   }
   stack(renderStackElement) {
     return this.renderStack.push(renderStackElement);
@@ -5673,6 +5675,13 @@ const _Display2D = class _Display2D extends Matrix2D {
   }
   update(context) {
     this.identity();
+    if (this.waitingBound) {
+      this.updateBounds();
+    }
+    if (this.bounds && this.axis) {
+      this.xAxis = this.bounds.width * this.axis.x / this.scaleX;
+      this.yAxis = this.bounds.height * this.axis.y / this.scaleY;
+    }
     this.inverseW = 1 / this.width;
     this.inverseH = 1 / this.height;
     context.save();
@@ -5685,29 +5694,30 @@ const _Display2D = class _Display2D extends Matrix2D {
     context.restore();
   }
 };
-__publicField(_Display2D, "display2dIndex", 0);
 __publicField(_Display2D, "MOUSE_OVER", "MOUSE_OVER");
 __publicField(_Display2D, "MOUSE_OUT", "MOUSE_OUT");
 __publicField(_Display2D, "CLICK", "CLICK");
+__publicField(_Display2D, "ADDED", "ADDED");
+__publicField(_Display2D, "REMOVED", "REMOVED");
+__publicField(_Display2D, "ADDED_TO_STAGE", "ADDED_TO_STAGE");
+__publicField(_Display2D, "REMOVED_FROM_STAGE", "REMOVED_FROM_STAGE");
+__publicField(_Display2D, "display2dIndex", 0);
 __publicField(_Display2D, "pathManager", new Path());
 let Display2D = _Display2D;
-class Group2D extends Display2D {
+const _Group2D = class _Group2D extends Display2D {
   constructor() {
     super(1, 1);
-    /*
-      TODO : faire marcher la sauvegarde
-             => gerer le chargement en deux temps
-                => d'abord on créé tout les objets, on les appendChild ou les association avec d'autre objets dans un second temps
-                   ==> trouver un moyen de créer les objets sans utiliser les références d'objets de manière synchrone
-    
-           - correction du cacheAsBitmap & bounds de Shape
-    
-           - triangulation
-    
-      */
     __publicField(this, "_numChildren", 0);
     __publicField(this, "_children");
     this._children = [];
+    this.axis = Align.TOP_LEFT.clone();
+    const onChildListChange = () => {
+      console.log("onChildListChange ", this, !!this.stage);
+      if (!this.stage || this.stage.frameId == 0 || !this.axis) this.waitingBound = true;
+      else this.updateBounds();
+    };
+    this.addEventListener(_Group2D.CHILD_ADDED, onChildListChange);
+    this.addEventListener(_Group2D.CHILD_REMOVED, onChildListChange);
   }
   get dataString() {
     var data = super.dataString;
@@ -5723,12 +5733,53 @@ class Group2D extends Display2D {
     var params = data.split("#");
     var t = params[3].split(",");
     var o;
-    if (!target) o = new Group2D();
+    if (!target) o = new _Group2D();
     else o = target;
     Display2D.fromDataString(data, o);
     var i, len = t.length;
     for (i = 0; i < len; i++) o.appendChild(ObjectLibrary.instance.getObjectByRegisterId(t[i]));
     return o;
+  }
+  align(displayAlign = Align.CENTER) {
+    this.axis = displayAlign.clone();
+  }
+  updateBounds() {
+    const frameId = this.stage.frameId;
+    if (this.children.length == 0) {
+      this.waitingBound = true;
+      return this._bounds;
+    }
+    if (this.boundFrameId == frameId || !this.axis) {
+      this.waitingBound = true;
+      return this._bounds;
+    }
+    for (let i = 0; i < this.children.length; i++) {
+      if (!this.children[i].axis) {
+        this.waitingBound = true;
+        return this._bounds;
+      }
+    }
+    this.boundFrameId = frameId;
+    if (!this._bounds) this._bounds = new Rectangle2D(9999999, 9999999, -9999999, -9999999);
+    else this._bounds.init(9999999, 9999999, -9999999, -9999999);
+    for (let i = 0; i < this.children.length; i++) {
+      const b = this.children[i].updateBounds();
+      if (b) {
+        this._bounds.add(b);
+      } else {
+        this._bounds = void 0;
+        this.waitingBound = true;
+        return;
+      }
+    }
+    if (!this.currentTransform) this.currentTransform = this.applyTransform();
+    const pt = this.currentTransform.transformPoint(new DOMPoint(0, 0));
+    this._bounds.minX -= pt.x;
+    this._bounds.minY -= pt.y;
+    this._bounds.maxX -= pt.x;
+    this._bounds.maxY -= pt.y;
+    this.waitingBound = this._bounds.width == 1 && this._bounds.height == 1;
+    return this._bounds;
   }
   setStage(stage) {
     super.setStage(stage);
@@ -5738,7 +5789,10 @@ class Group2D extends Display2D {
   appendChild(element) {
     this._children[this._numChildren++] = element;
     element.parent = this;
+    element.dispatchEvent(Display2D.ADDED);
     element.setStage(this.stage);
+    this.dispatchEvent(_Group2D.CHILD_ADDED);
+    this.updateBounds();
     return element;
   }
   removeChild(element) {
@@ -5747,7 +5801,9 @@ class Group2D extends Display2D {
     this._children.splice(id, 1);
     this._numChildren--;
     element.parent = null;
+    element.dispatchEvent(Display2D.REMOVED);
     element.setStage(null);
+    this.dispatchEvent(_Group2D.CHILD_REMOVED);
     return element;
   }
   get numChildren() {
@@ -5757,20 +5813,44 @@ class Group2D extends Display2D {
     return this._children;
   }
   update(context) {
+    if (this.children.length == 0) return;
     this.alpha;
     const parent = this.parent;
     const children = this.children;
     this.identity();
     if (parent) this.multiply(parent);
+    if (this.waitingBound) {
+      this.updateBounds();
+    }
+    if (this.axis && this.bounds) {
+      this.xAxis = this.bounds.width * this.axis.x / this.scaleX;
+      this.yAxis = this.bounds.height * this.axis.y / this.scaleY;
+    }
     const m = this.applyTransform();
     context.save();
     let i, nb = this._numChildren;
-    for (i = 0; i < nb; i++) children[i].update(context);
+    for (i = 0; i < nb; i++) {
+      children[i].update(context);
+    }
     context.restore();
     return m;
   }
-}
-class Stage2D extends Group2D {
+};
+/*
+  TODO : faire marcher la sauvegarde
+         => gerer le chargement en deux temps
+            => d'abord on créé tout les objets, on les appendChild ou les association avec d'autre objets dans un second temps
+               ==> trouver un moyen de créer les objets sans utiliser les références d'objets de manière synchrone
+
+       - correction du cacheAsBitmap & bounds de Shape
+
+       - triangulation
+
+  */
+__publicField(_Group2D, "CHILD_ADDED", "CHILD_ADDED");
+__publicField(_Group2D, "CHILD_REMOVED", "CHILD_REMOVED");
+let Group2D = _Group2D;
+const _Stage2D = class _Stage2D extends Group2D {
   constructor(w, h = 0, appendOnBody = true) {
     super();
     __publicField(this, "_canvas");
@@ -5778,7 +5858,12 @@ class Stage2D extends Group2D {
     __publicField(this, "_outputContext");
     __publicField(this, "_context");
     __publicField(this, "_mouseControler");
+    __publicField(this, "_frameId", 0);
+    __publicField(this, "_started", false);
+    __publicField(this, "clearColor", "#000");
+    __publicField(this, "autoClear", true);
     this._stage = this;
+    this.axis = Align.TOP_LEFT;
     if (w instanceof HTMLCanvasElement) {
       appendOnBody = false;
       this._output = w;
@@ -5817,7 +5902,7 @@ class Stage2D extends Group2D {
     var sizes = t[1].split(",");
     data = t[0];
     var t = data.split("#")[2].split(",");
-    var o = new Stage2D(Number(sizes[0]), Number(sizes[1]), true);
+    var o = new _Stage2D(Number(sizes[0]), Number(sizes[1]), true);
     Group2D.fromDataString(data, o);
     return o;
   }
@@ -5857,6 +5942,15 @@ class Stage2D extends Group2D {
   get stageHeight() {
     return this._canvas.height;
   }
+  get realWidth() {
+    return this.stageWidth;
+  }
+  get realHeight() {
+    return this.stageHeight;
+  }
+  get frameId() {
+    return this._frameId;
+  }
   clearElements() {
     const len = this.numChildren;
     for (let i = len - 1; i >= 0; i--) {
@@ -5865,17 +5959,38 @@ class Stage2D extends Group2D {
       this.removeChild(child);
     }
   }
-  drawElements() {
-    this._context.fillStyle = "#000";
+  resetFrameId() {
+    this._frameId = 0;
+  }
+  clear() {
+    this._context.fillStyle = this.clearColor;
     this._context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+  drawElements() {
+    if (this.children.length == 0) return;
+    if (this.autoClear) this.clear();
+    if (this._frameId == 0) this.dispatchEvent(_Stage2D.FIRST_FRAME_BEGIN);
+    this.dispatchEvent(_Stage2D.DRAW_BEGIN);
     super.update(this._context);
     if (Browser.canUseImageBitmap) {
       createImageBitmap(this._canvas).then((bmp) => this._outputContext.transferFromImageBitmap(bmp));
     } else {
       this._outputContext.drawImage(this._canvas, 0, 0);
     }
+    this.dispatchEvent(_Stage2D.DRAW_END);
+    if (this.waitingBound) {
+      console.log("stage call updateBounds");
+      this.updateBounds();
+    }
+    if (this._frameId == 0) this.dispatchEvent(_Stage2D.FIRST_FRAME_END);
+    this._frameId++;
   }
-}
+};
+__publicField(_Stage2D, "DRAW_BEGIN", "DRAW_BEGIN");
+__publicField(_Stage2D, "DRAW_END", "DRAW_END");
+__publicField(_Stage2D, "FIRST_FRAME_BEGIN", "FIRST_FRAME_BEGIN");
+__publicField(_Stage2D, "FIRST_FRAME_END", "FIRST_FRAME_END");
+let Stage2D = _Stage2D;
 class ColorEvents {
 }
 //SOLID COLOR EVENTS
@@ -5979,7 +6094,7 @@ const _HolePathRemover = class _HolePathRemover {
         dy = oy - hy;
         outPt.dist = dx * dx + dy * dy;
       }
-      outside = outside.sort(function(a, b) {
+      outside = outside.sort((a, b) => {
         if (a.dist > b.dist) return 1;
         if (a.dist < b.dist) return -1;
         return 0;
@@ -6437,14 +6552,13 @@ class Img extends BitmapData {
     //private _h: number;
     __publicField(this, "_url", "");
     __publicField(this, "onLoaded");
-    var th = this;
     var img = this._img = document.createElement("img");
-    img.onload = function() {
-      th.width = img.width;
-      th.height = img.height;
-      th.drawImage(img, 0, 0);
-      if (th.onLoaded) th.onLoaded(img);
-      th.dispatchEvent(Img.IMAGE_LOADED);
+    img.onload = () => {
+      this.width = img.width;
+      this.height = img.height;
+      this.drawImage(img, 0, 0);
+      if (this.onLoaded) this.onLoaded(img);
+      this.dispatchEvent(Img.IMAGE_LOADED);
     };
     this.url = url;
   }
@@ -6592,10 +6706,9 @@ class Filter extends DirtyEventDispatcher {
     __publicField(this, "_radius", 0);
     __publicField(this, "_intensity", 0);
     __publicField(this, "_angle", 0);
-    var th = this;
-    this._updateColor = function() {
-      th.dirty = true;
-      th.applyDirty();
+    this._updateColor = () => {
+      this.dirty = true;
+      this.applyDirty();
     };
   }
   get value() {

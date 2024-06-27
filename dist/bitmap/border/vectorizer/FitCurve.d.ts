@@ -2,9 +2,9 @@ import { BorderPt } from '../BorderPt';
 
 export declare class FitCurve {
     constructor();
-    static borderToCurve(border: BorderPt[], maxError?: number, progressCallback?: Function): number[][][];
+    static borderToCurve(border: BorderPt[], maxError?: number, progressCallback?: () => void): number[][][];
     static drawCurves(ctx: CanvasRenderingContext2D, curves: number[][][]): void;
-    static fitCurve(points: number[][], maxError?: number, progressCallback?: Function): number[][][];
+    static fitCurve(points: number[][], maxError?: number, progressCallback?: () => void): number[][][];
     private static fitCubic;
     private static generateAndReport;
     private static generateBezier;

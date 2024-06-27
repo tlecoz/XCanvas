@@ -13,7 +13,7 @@ export class MouseControler extends EventDispatcher {
   constructor(canvas: HTMLCanvasElement) {
     super();
 
-    var th = this;
+
     var mc = this.htmlCanvas = canvas;
 
     mc.onmouseover = (e) => {

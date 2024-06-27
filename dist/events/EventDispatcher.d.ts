@@ -1,15 +1,14 @@
 import { RegisterableObject } from '../utils/RegisterableObject';
 
-export declare class EventDispatcher extends RegisterableObject {
-    customData: any;
-    private ___dispatcherNames;
-    private ___nbDispatcher;
-    private ___dispatcherActifById;
-    private ___dispatcherFunctionById;
-    constructor();
-    addEventListener(name: string, func: Function, overrideExistingEventIfExists?: boolean): void;
+export type BasicEvent = {
+    target: EventDispatcher;
+    data?: unknown;
+};
+export type EventCallback<T extends BasicEvent> = (event: T) => void;
+export declare class EventDispatcher<E extends BasicEvent = BasicEvent> extends RegisterableObject {
+    private listeners;
+    addEventListener(eventName: string, callback: EventCallback<E>): void;
+    removeEventListener(eventName: string, callback: EventCallback<E>): void;
+    dispatchEvent(eventName: string, data?: E["data"]): void;
     clearEvents(): void;
-    removeEventListener(name: string, func?: Function): void;
-    applyEvents(object?: any): void;
-    dispatchEvent(eventName: string): void;
 }

@@ -1,6 +1,6 @@
 {
   "name": "xcanvas-ts",
-  "version": "0.9.13",
+  "version": "0.9.14",
   "description": "XCanvas is a powerful and flexible TypeScript library for manipulating HTML5 canvases, making every aspect of canvas manipulation extendable and reusable.",
   "main": "src/index.ts",
   "module": "src/index.ts",

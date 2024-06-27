@@ -14,6 +14,10 @@ export class GradientTextStroke extends Gradient {
 
   }
 
+  public clone(): GradientTextStroke {
+    return new GradientTextStroke(this.textStyle.clone(true), this.gradient.clone(true), this.isLinear);
+  }
+
 
   public get dataString(): string {
     var linear: number = 0;

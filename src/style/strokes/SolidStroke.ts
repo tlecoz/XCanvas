@@ -23,6 +23,12 @@ export class SolidStroke extends Solid {
     else this.lineStyle = lineStyle;
   }
 
+  public clone(): SolidStroke {
+    return new SolidStroke(this.color.clone());
+  }
+
+
+
   public get dataString(): string {
     return this.color.REGISTER_ID + "," + (this.lineStyle ? this.lineStyle.REGISTER_ID : "null");
   }

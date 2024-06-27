@@ -13,6 +13,11 @@ export class GradientStroke extends Gradient {
     this.lineStyle = lineStyle ? lineStyle : new LineStyle(2);
 
   }
+
+  public clone(): GradientStroke {
+    return new GradientStroke(this.gradient.clone(true), this.isLinear, this.lineStyle.clone())
+  }
+
   public get dataString(): string {
     var linear: number = 0;
     if (this.isLinear) linear = 1;

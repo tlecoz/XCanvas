@@ -150,8 +150,6 @@ export class Stage2D extends Group2D {
 
     super.update(this._context);
 
-
-
     if (Browser.canUseImageBitmap) {
 
       createImageBitmap(this._canvas).then((bmp) => this._outputContext.transferFromImageBitmap(bmp));

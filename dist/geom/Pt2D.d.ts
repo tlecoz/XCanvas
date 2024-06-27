@@ -6,6 +6,7 @@ export declare class Pt2D {
     static Y: Pt2D;
     static ZERO: Pt2D;
     constructor(x?: number, y?: number, isCurveAnchor?: boolean);
+    clone(): Pt2D;
     equals(pt: Pt2D): boolean;
     add(pt: Pt2D): Pt2D;
     substract(pt: Pt2D): Pt2D;

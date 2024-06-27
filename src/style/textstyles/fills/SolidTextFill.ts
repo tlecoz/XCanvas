@@ -14,6 +14,10 @@ export class SolidTextFill extends Solid {
 
   }
 
+  public clone(): SolidTextFill {
+    return new SolidTextFill(this.textStyle.clone(true), this.color.clone());
+  }
+
   public get dataString(): string {
     return this.textStyle.REGISTER_ID + "," + this.color.REGISTER_ID;
   }

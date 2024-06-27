@@ -15,7 +15,6 @@ export class Img extends BitmapData {
     super();
 
 
-    var th = this;
     var img = this._img = document.createElement("img");
     img.onload = () => {
       this.width = img.width;

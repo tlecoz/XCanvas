@@ -12,6 +12,10 @@ export class PatternFill extends Pattern {
 
   }
 
+  public clone(): PatternFill {
+    return new PatternFill(this.bitmapData.clone(), this.crop, this.applyTargetScale);
+  }
+
   public get dataString(): string {
     var crop: number = 0;
     var targetScale: number = 0;

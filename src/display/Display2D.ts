@@ -95,6 +95,21 @@ export class Display2D extends Matrix2D {
 
   }
 
+  public get(condition: (val: any) => boolean, clone: boolean = true) {
+
+    if (clone) {
+      this.renderStack = this.renderStack.clone();
+      const t = this.renderStack.elements.filter(condition);
+      const res = [];
+      //const res = [];
+      t.forEach((v, id) => res[id] = v.value);
+      return res;
+    }
+
+    return this.renderStack.elements.filter(condition);
+  }
+
+
   public get dataString(): string {
     var datas: string = super.dataString;
     datas += "#";
@@ -182,7 +197,7 @@ export class Display2D extends Matrix2D {
 
     if (bool) {
 
-      console.log(b.width * this.axis.x, b.height * this.axis.y)
+      //console.log(b.width * this.axis.x, b.height * this.axis.y)
 
       const bw = b.width;
       const bh = b.height;
@@ -192,7 +207,7 @@ export class Display2D extends Matrix2D {
       b.maxX -= this.axis.x * bw;
       b.maxY -= this.axis.y * bh;
 
-      console.log(b)
+      //console.log(b)
     }
 
 
@@ -201,7 +216,7 @@ export class Display2D extends Matrix2D {
   }
 
 
-  public stack(renderStackElement: RenderStackable): RenderStackElement {
+  public stack(renderStackElement: RenderStackable | RenderStack): RenderStackElement | RenderStack {
     return this.renderStack.push(renderStackElement);
   }
 

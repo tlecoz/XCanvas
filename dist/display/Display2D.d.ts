@@ -11,10 +11,14 @@ import { Stage2D } from './Stage2D';
 
 export type FillType = string | CanvasGradient | CanvasPattern;
 export declare class Display2D extends Matrix2D {
-    private static display2dIndex;
     static MOUSE_OVER: string;
     static MOUSE_OUT: string;
     static CLICK: string;
+    static ADDED: string;
+    static REMOVED: string;
+    static ADDED_TO_STAGE: string;
+    static REMOVED_FROM_STAGE: string;
+    private static display2dIndex;
     static pathManager: Path;
     protected cache: BitmapCache;
     protected _stage: Stage2D | null;
@@ -30,10 +34,12 @@ export declare class Display2D extends Matrix2D {
     mouseEnabled: boolean;
     useBasicHitTest: boolean;
     parent: Group2D | null;
-    protected render: Function | null;
+    protected render: (e?: any) => void | null;
     currentTransform: DOMMatrix | null;
     protected _bounds: Rectangle2D;
     private _display2dName;
+    protected boundFrameId: number;
+    protected waitingBound: boolean;
     constructor(w: number, h: number, renderStack?: RenderStack);
     get dataString(): string;
     static fromDataString(data: string, target?: Display2D): Display2D;
@@ -43,6 +49,7 @@ export declare class Display2D extends Matrix2D {
     setStage(stage: Stage2D | null): void;
     get stage(): Stage2D | null;
     align(displayAlign?: Pt2D): void;
+    updateBounds(): Rectangle2D;
     stack(renderStackElement: RenderStackable): RenderStackElement;
     get cacheAsBitmap(): boolean;
     set cacheAsBitmap(b: boolean);

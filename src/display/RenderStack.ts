@@ -49,6 +49,40 @@ export class RenderStack extends RegisterableObject {
 
   }
 
+
+
+
+  public filter(condition: (val) => boolean): any {
+    const res = this.elements.filter(condition);
+
+    const result = [];
+
+
+    if (res.length) {
+
+
+      console.log(res)
+      res.forEach((val, id, array) => {
+        //result[id] = val.clone().value;
+
+        //if (val instanceof RenderStackElement) {
+        //console.log("AAAAAA ", val)
+        //this.elements[id] = val.clone();
+        //}
+
+
+        result[id] = val.value;
+      })
+    }
+
+
+
+    //console.log(result)
+
+    return result;
+  }
+
+
   public get dataString(): string {
     var s: string = "";
     var lastPath: string = "0";
@@ -103,14 +137,28 @@ export class RenderStack extends RegisterableObject {
   //#################
 
 
-  public push(renderStackElement: Path | TextPath | FillStroke | Shape, mouseEnabled: boolean = true): RenderStackElement {
-    var o: RenderStackElement = new RenderStackElement(renderStackElement, mouseEnabled);
-    this._elements.push(o);
-    if (renderStackElement instanceof Path || renderStackElement instanceof TextPath) this.lastPath = renderStackElement;
-    else if (renderStackElement instanceof FillStroke) this.lastFillStroke = renderStackElement;
-    o.init(this.lastPath, this.lastFillStroke);
-    return o;
+  public push(renderStackElement: Path | TextPath | FillStroke | Shape | RenderStack, mouseEnabled: boolean = true): RenderStackElement | RenderStack {
+
+    if (renderStackElement instanceof RenderStack) {
+
+      renderStackElement.elements.forEach((val) => {
+        this.elements.push(val);
+      })
+
+
+      return renderStackElement;
+    } else {
+      var o: RenderStackElement = new RenderStackElement(renderStackElement, mouseEnabled);
+      this._elements.push(o);
+      if (renderStackElement instanceof Path || renderStackElement instanceof TextPath) this.lastPath = renderStackElement;
+      else if (renderStackElement instanceof FillStroke) this.lastFillStroke = renderStackElement;
+      o.init(this.lastPath, this.lastFillStroke);
+      return o;
+    }
+
   }
+
+
 
   public updateWithHitTest(context: CanvasRenderingContext2D, target: Display2D, mouseX: number = Number.MAX_VALUE, mouseY: number = Number.MAX_VALUE, updateFromShape: boolean = false): boolean {
     let o: RenderStackElement;
@@ -133,6 +181,7 @@ export class RenderStack extends RegisterableObject {
 
           if (o.isPath || o.isTextPath) path = o.value as Path | TextPath
           else {
+
             (o.value as any).apply(context, path, target);
             if (!hitTest && o.mouseEnabled && target.useComplexHitTest) hitTest = path.isPointInside(context, mouseX, mouseY, o.isStroke);
           }
@@ -275,7 +324,7 @@ export class RenderStack extends RegisterableObject {
 
 
     var r: Rectangle2D = path.geometry.getBounds(target, (offsetW + lineW) * Math.sqrt(2), (offsetH + lineW) * Math.sqrt(2));
-    console.log("r = ", r);
+
     this.offsetW = lineW + (offsetW) * (Math.sqrt(2) + 1);
     this.offsetH = lineW + (offsetH) * (Math.sqrt(2) + 1);
     return r;

@@ -5,7 +5,7 @@ export declare class Filter extends DirtyEventDispatcher {
     boundOffsetW: number;
     boundOffsetH: number;
     next: Filter;
-    protected _updateColor: Function;
+    protected _updateColor: () => void;
     protected _color: SolidColor;
     protected _offsetX: number;
     protected _offsetY: number;

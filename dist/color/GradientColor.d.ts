@@ -1,5 +1,5 @@
 import { Display2D } from '../display/Display2D';
-import { EventDispatcher } from '../events/EventDispatcher';
+import { BasicEvent, EventDispatcher } from '../events/EventDispatcher';
 import { SolidColor } from './SolidColor';
 
 export declare class GradientColor extends EventDispatcher {
@@ -15,7 +15,7 @@ export declare class GradientColor extends EventDispatcher {
     protected r1: number;
     protected style: CanvasGradient | null;
     protected ctx: CanvasRenderingContext2D | null;
-    protected onUpdateStyle: Function | null;
+    protected onUpdateStyle: (e?: BasicEvent) => void | null;
     dirty: boolean;
     isLinear: boolean;
     scaleX: number;

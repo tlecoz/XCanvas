@@ -39,6 +39,10 @@ export class Path extends RegisterableObject {
     }
   }
 
+  public clone(): Path {
+    return new Path(this.datas);
+  }
+
   public get dataString(): string { return this.datas.join(","); }
 
   public static fromDataString(data: string): Path {

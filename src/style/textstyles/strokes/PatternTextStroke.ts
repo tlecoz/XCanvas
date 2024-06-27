@@ -14,6 +14,10 @@ export class PatternTextStroke extends Pattern {
 
   }
 
+  public clone(): PatternTextStroke {
+    return new PatternTextStroke(this.textStyle.clone(true), this.bitmapData.clone(), this.centerInto, this.applyTargetScale);
+  }
+
   public get dataString(): string {
     var crop: number = 0;
     var targetScale: number = 0;

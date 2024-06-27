@@ -11,6 +11,9 @@ export class GradientFill extends Gradient {
     this.styleType = "fillStyle";
 
   }
+  public clone(): GradientFill {
+    return new GradientFill(this.gradient.clone(true));
+  }
 
   public get dataString(): string {
     return this.gradient.REGISTER_ID;

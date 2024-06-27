@@ -64,7 +64,7 @@ export class Video extends BitmapData {
     this.useNativeBitmapData = true//(Browser.canUseImageBitmap == false)
     //######
 
-    var th = this;
+
     var started: boolean = false;
 
     video.onpause = () => { this.playing = false; }

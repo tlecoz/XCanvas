@@ -12,6 +12,9 @@ export class TextPath extends RegisterableObject {
   public get dataString(): string { return this.text; }
   public static fromDataString(data: string) { return new TextPath(data); }
 
+  public clone(): TextPath {
+    return new TextPath(this.text);
+  }
 
   //@ts-ignore
   public isPointInside(context, px: number, py: number, isStroke: boolean, fillrule = "nonzero"): boolean {

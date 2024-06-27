@@ -32,7 +32,7 @@ export class Group2D extends Display2D {
     this.axis = Align.TOP_LEFT.clone();
 
     const onChildListChange = () => {
-      console.log("onChildListChange ", this, !!this.stage)
+      //console.log("onChildListChange ", this, !!this.stage)
       if (!this.stage || this.stage.frameId == 0 || !this.axis) this.waitingBound = true;
       else this.updateBounds();
     }

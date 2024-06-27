@@ -117,16 +117,16 @@ export class App4 {
         contener.appendChild(compositeObject);
 
 
-        compositeObject.addEventListener(Display2D.MOUSE_OVER, function (e) {
+        compositeObject.addEventListener(Display2D.MOUSE_OVER, () => {
             compositeObject.alpha = 0.5;
 
         })
-        compositeObject.addEventListener(Display2D.MOUSE_OUT, function (e) {
+        compositeObject.addEventListener(Display2D.MOUSE_OUT, () => {
             compositeObject.alpha = 1
         })
 
 
-        document.body.onclick = function () {
+        document.body.onclick = () => {
             //in order to inprove performance, you can store the result of a renderPass in a bitmapCache
             //(if you do it, the property cannot be updated anymore )
             //(you must set "cacheAsBitmap" to false if you want to update the stack)

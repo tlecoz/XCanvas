@@ -22,6 +22,10 @@ export class Shape extends RegisterableObject {
     this.renderStack = renderStack;
   }
 
+  public clone(): Shape {
+    return new Shape(this.x, this.y, this.w, this.h, this.renderStack.clone());
+  }
+
   public get dataString(): string {
     return [this.x, this.y, this.w, this.h, this.renderStack.REGISTER_ID].join(",");
   }

@@ -14,6 +14,10 @@ export class PatternTextFill extends Pattern {
 
   }
 
+  public clone(): PatternTextFill {
+    return new PatternTextFill(this.textStyle.clone(), this.bitmapData.clone(), this.crop, this.applyTargetScale);
+  }
+
   public get dataString(): string {
     var crop: number = 0;
     var targetScale: number = 0;

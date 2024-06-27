@@ -41,6 +41,10 @@ export class FillStroke extends RegisterableObject {
     //this._filters = new FilterStack();
   }
 
+  public clone(): FillStroke {
+    return { ...this };
+  }
+
   //@ts-ignore
   public apply(context: CanvasRenderingContext2D, path: Fillable, target: Display2D): void {
     if (target.fillStrokeDrawable) context.globalAlpha = this.alpha * target.globalAlpha;

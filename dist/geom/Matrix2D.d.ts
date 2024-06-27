@@ -1,4 +1,5 @@
 import { EventDispatcher } from '../events/EventDispatcher';
+import { Pt2D } from './Pt2D';
 
 export declare class Matrix2D extends EventDispatcher {
     static IDENTITY: DOMMatrix;
@@ -6,6 +7,7 @@ export declare class Matrix2D extends EventDispatcher {
     y: number;
     xAxis: number;
     yAxis: number;
+    axis: Pt2D;
     rotation: number;
     scaleX: number;
     scaleY: number;
@@ -15,6 +17,7 @@ export declare class Matrix2D extends EventDispatcher {
     offsetH: number;
     protected matrix: DOMMatrix;
     protected savedMatrixs: any;
+    debug: boolean;
     constructor();
     get dataString(): string;
     static fromDataString(data: string, target?: Matrix2D): Matrix2D;

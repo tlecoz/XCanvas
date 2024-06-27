@@ -189,7 +189,7 @@ export class App {
       mc.stack(CirclePath.instance);
       mc.stack(fill);
       mc.stack(stroke);
-      textElement = mc.stack(new TextPath("Hello Canvas !"));
+      textElement = mc.stack(new TextPath("Hello Canvas !")) as RenderStackElement;
       mc.stack(textFill);
 
       mc.stack(shape);
@@ -203,18 +203,20 @@ export class App {
 
       mc.alpha = alpha
       //mc.scaleX = 1.5;
-      mc.addEventListener(Display2D.MOUSE_OVER, function (e) {
+      mc.addEventListener(Display2D.MOUSE_OVER, () => {
         console.log("over");
         mc.alpha = 0.5;//alpha - 0.25;
 
       })
-      mc.addEventListener(Display2D.MOUSE_OUT, function (e) {
+      mc.addEventListener(Display2D.MOUSE_OUT, () => {
         //console.log("out");
         mc.alpha = alpha
       })
     }
 
-    document.body.onclick = function () {
+
+
+    document.body.onclick = () => {
       for (i = 0; i < nbMc; i++) {
         mcs[i].cacheAsBitmap = !mcs[i].cacheAsBitmap;
       }

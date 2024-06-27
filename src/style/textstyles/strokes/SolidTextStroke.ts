@@ -11,9 +11,12 @@ export class SolidTextStroke extends Solid {
     super(r, g, b, a);
     this.styleType = "strokeStyle";
     this.textStyle = textStyle;
-
-
   }
+
+  public clone(): SolidTextStroke {
+    return new SolidTextStroke(this.textStyle.clone(true), this.color.clone())
+  }
+
   public get dataString(): string {
     console.log("SolidTextStroke get dataString textStyle = ", this.textStyle);
     console.log("SolidTextStroke get dataString color = ", this.color);

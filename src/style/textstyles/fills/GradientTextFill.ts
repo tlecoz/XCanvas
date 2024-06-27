@@ -14,6 +14,10 @@ export class GradientTextFill extends Gradient {
 
   }
 
+  public clone(): GradientTextFill {
+    return new GradientTextFill(this.textStyle.clone(true), this.gradient.clone(true), this.isLinear);
+  }
+
 
   public get dataString(): string {
     var linear: number = 0;

@@ -11,6 +11,11 @@ export class SolidFill extends Solid {
     this.styleType = "fillStyle";
 
   }
+
+  public clone() {
+    return new SolidFill(this.color.clone());
+  }
+
   public get dataString(): string {
     return this.color.REGISTER_ID;
   }

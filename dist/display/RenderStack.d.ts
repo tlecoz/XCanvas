@@ -30,7 +30,7 @@ export declare class RenderStack extends RegisterableObject {
     offsetW: number;
     offsetH: number;
     mouse: MouseControler;
-    constructor();
+    constructor(elements?: (Path | TextPath | FillStroke | Shape)[]);
     get dataString(): string;
     static fromDataString(data: string): RenderStack;
     get elements(): RenderStackElement[];

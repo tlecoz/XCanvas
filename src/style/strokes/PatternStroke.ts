@@ -13,6 +13,11 @@ export class PatternStroke extends Pattern {
     this.lineStyle = lineStyle ? lineStyle : new LineStyle(2);
 
   }
+
+  public clone(): PatternStroke {
+    return new PatternStroke(this.bitmapData.clone(), this.crop, this.applyTargetScale, this.lineStyle.clone());
+  }
+
   public get dataString(): string {
     var crop: number = 0;
     var targetScale: number = 0;

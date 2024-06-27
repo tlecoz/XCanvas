@@ -2,11 +2,19 @@ import { MouseControler } from '../controlers/MouseControler';
 import { Group2D } from './Group2D';
 
 export declare class Stage2D extends Group2D {
+    static DRAW_BEGIN: string;
+    static DRAW_END: string;
+    static FIRST_FRAME_BEGIN: string;
+    static FIRST_FRAME_END: string;
     protected _canvas: HTMLCanvasElement;
     protected _output: HTMLCanvasElement;
     protected _outputContext: CanvasRenderingContext2D | any;
     protected _context: CanvasRenderingContext2D;
     protected _mouseControler: MouseControler;
+    protected _frameId: number;
+    protected _started: boolean;
+    clearColor: string;
+    autoClear: boolean;
     constructor(w: number | HTMLCanvasElement, h?: number, appendOnBody?: boolean);
     get dataString(): string;
     static fromDataString(data: string): Stage2D;
@@ -22,6 +30,11 @@ export declare class Stage2D extends Group2D {
     get globalRotation(): number;
     get stageWidth(): number;
     get stageHeight(): number;
+    get realWidth(): number;
+    get realHeight(): number;
+    get frameId(): number;
     clearElements(): void;
+    resetFrameId(): void;
+    clear(): void;
     drawElements(): void;
 }
