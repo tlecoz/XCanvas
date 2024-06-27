@@ -118,11 +118,11 @@ export class App4 {
 
 
         compositeObject.addEventListener(Display2D.MOUSE_OVER, function (e) {
-            e.alpha = 0.5;
+            compositeObject.alpha = 0.5;
 
         })
         compositeObject.addEventListener(Display2D.MOUSE_OUT, function (e) {
-            e.alpha = 1
+            compositeObject.alpha = 1
         })
 
 

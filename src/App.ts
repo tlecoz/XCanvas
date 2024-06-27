@@ -204,7 +204,7 @@ export class App {
       mc.alpha = alpha
       //mc.scaleX = 1.5;
       mc.addEventListener(Display2D.MOUSE_OVER, function (e) {
-        //console.log("over");
+        console.log("over");
         mc.alpha = 0.5;//alpha - 0.25;
 
       })

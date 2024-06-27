@@ -169,6 +169,7 @@ export class RenderStack extends RegisterableObject {
         }
         context.restore();
       }
+
     } else {
       this.updateBounds(target);
       target.bitmapCache.draw(context, this.offsetW, this.offsetH);

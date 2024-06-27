@@ -46,8 +46,6 @@ export class GradientColor extends EventDispatcher {
   constructor(colors: SolidColor[] | null = null, ratios: number[] | null = null, isLinear: boolean = true) {
     super();
 
-    //var th = this;
-    //this.onUpdateStyle = function(){th.dirty = true;}
 
     if (colors) this.setColorStep(colors, ratios as number[]);
     else {

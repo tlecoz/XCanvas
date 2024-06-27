@@ -41,8 +41,10 @@ export class Shape extends RegisterableObject {
 
     //console.log(target instanceof Display2D)
 
-    if (target.mouseEnabled) b = this.renderStack.updateWithHitTest(context, target, mouseX, mouseY, true);
-    else {
+    if (target.mouseEnabled) {
+      b = this.renderStack.updateWithHitTest(context, target, mouseX, mouseY, true);
+      console.log("hit = ", b)
+    } else {
 
 
       b = this.renderStack.update(context, target, true);

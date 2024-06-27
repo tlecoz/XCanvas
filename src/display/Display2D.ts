@@ -56,7 +56,7 @@ export class Display2D extends Matrix2D {
 
   public currentTransform: DOMMatrix | null = null;
 
-  protected _bounds: Rectangle2D = new Rectangle2D();
+  protected _bounds: Rectangle2D;// = new Rectangle2D();
   private _display2dName: string
 
 
@@ -77,7 +77,7 @@ export class Display2D extends Matrix2D {
     if (!renderStack) this.renderStack = new RenderStack();
     else this.renderStack = renderStack;
 
-    this._bounds;// = new Rectangle2D(0, 0, w, h);
+    this._bounds = new Rectangle2D(0, 0, w, h);
     this.cache = new BitmapCache(this);
 
 
