@@ -324,6 +324,8 @@ export class RenderStack extends RegisterableObject {
 
 
     var r: Rectangle2D = path.geometry.getBounds(target, (offsetW + lineW) * Math.sqrt(2), (offsetH + lineW) * Math.sqrt(2));
+    //target.bounds.init(r.minX, r.minY, r.maxX, r.maxY);
+
 
     this.offsetW = lineW + (offsetW) * (Math.sqrt(2) + 1);
     this.offsetH = lineW + (offsetH) * (Math.sqrt(2) + 1);

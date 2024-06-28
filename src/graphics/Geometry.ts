@@ -75,7 +75,7 @@ export class Geometry {
 
 
 
-    return target.bounds.init(minX - ox, minY - oy, maxX + ox, maxY + oy);
+    return new Rectangle2D(minX - ox, minY - oy, maxX + ox, maxY + oy);
   }
 
 

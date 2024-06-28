@@ -163,10 +163,17 @@ export class Path extends RegisterableObject {
       for (j = start; j < nb; j++) {
         val = datas[j];
 
-        if (val < minX) minX = val;
-        if (val < minY) minY = val;
-        if (val > maxX) maxX = val;
-        if (val > maxY) maxY = val;
+        if (j % 2 == 0) {
+          if (val < minY) minY = val;
+          if (val > maxY) maxY = val;
+
+        } else {
+          if (val < minX) minX = val;
+          if (val > maxX) maxX = val;
+        }
+
+
+
       }
 
       if (useRadius) {
@@ -226,11 +233,12 @@ export class Path extends RegisterableObject {
         //isXY = j < endXY;
 
         if (j % 2 == 0) {
-          val -= minX;
-          val /= dx;
-        } else {
           val -= minY;
           val /= dy;
+
+        } else {
+          val -= minX;
+          val /= dx;
         }
         //console.log("datas["+j+"] = ",val);
         datas[j] = val;
