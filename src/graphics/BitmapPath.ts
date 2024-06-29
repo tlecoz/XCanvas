@@ -3,6 +3,7 @@ import { BorderFinder } from "../bitmap/border/BorderFinder";
 import { BorderPt } from "../bitmap/border/BorderPt";
 import { BorderVectorizer } from "../bitmap/border/vectorizer/BorderVectorizer";
 import { FitCurve } from "../bitmap/border/vectorizer/FitCurve";
+import { Rectangle2D } from "../geom/Rectangle2D";
 import { Path } from "./Path";
 
 export class BitmapPath extends Path {
@@ -16,13 +17,15 @@ export class BitmapPath extends Path {
   protected _outsideCurves: number[][][] | null = null;
   protected _holeCurves: number[][][][] | null = null;
 
+  protected _bitmapBounds: Rectangle2D = new Rectangle2D();
+
   protected bd: BitmapData;
   protected precision: number;
   protected curveSmooth: number;
 
   constructor(bd: BitmapData, percentOfTheOriginal: number = 0.055, curveSmooth: number = 1) {
     super();
-    this.bd = bd;
+    this.bd = bd.clone();
     this.precision = percentOfTheOriginal;
     this.curveSmooth = curveSmooth;
     this.updateBitmapBorders();
@@ -30,7 +33,12 @@ export class BitmapPath extends Path {
 
   }
 
-
+  protected updateBitmapBounds(): void {
+    this._bitmapBounds.init();
+    this._outsideBitmap.forEach((pt) => this._bitmapBounds.addPoint(pt));
+    this._bitmapBounds.minX = (this.bd.width - this._bitmapBounds.width) * 0.5;
+    this._bitmapBounds.minY = (this.bd.height - this._bitmapBounds.height) * 0.5;
+  }
 
 
   public updateBitmapBorders(): void {
@@ -43,6 +51,8 @@ export class BitmapPath extends Path {
 
     this.vectorize(this.precision);
     if (this.curveSmooth != 0) this.convertLinesToCurves(this.curveSmooth);
+
+    this.updateBitmapBounds();
   }
 
 
@@ -175,6 +185,7 @@ export class BitmapPath extends Path {
 
   }
 
+  public get bitmapBounds(): Rectangle2D { return this._bitmapBounds; }
 
   public get outsideBitmap(): BorderPt[] | null { return this._outsideBitmap }
   public get holeBitmap(): BorderPt[][] | null { return this._holeBitmap }

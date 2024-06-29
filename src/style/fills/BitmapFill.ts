@@ -64,7 +64,7 @@ export class BitmapFill extends FillStroke {
     context.clip(path.path);
 
     context.scale(target.inverseW * this.scaleX, target.inverseH * this.scaleY);
-    context.translate(target.xAxis, target.yAxis);
+    //context.translate(target.xAxis, target.yAxis);
     context.rotate(this.rotation)
     if (this.centerInto) context.translate((target.width - bd.width) * 0.5, (target.height - bd.height) * 0.5);
     context.translate(this.x, this.y)

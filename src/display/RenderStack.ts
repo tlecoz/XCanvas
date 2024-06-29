@@ -61,16 +61,7 @@ export class RenderStack extends RegisterableObject {
     if (res.length) {
 
 
-      console.log(res)
-      res.forEach((val, id, array) => {
-        //result[id] = val.clone().value;
-
-        //if (val instanceof RenderStackElement) {
-        //console.log("AAAAAA ", val)
-        //this.elements[id] = val.clone();
-        //}
-
-
+      res.forEach((val, id) => {
         result[id] = val.value;
       })
     }

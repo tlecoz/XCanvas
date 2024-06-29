@@ -386,9 +386,10 @@ export class BitmapData extends EventDispatcher {
   //-------------FLOOD FILL ------------------------------------------------
   public floodFillRGBAandReturnOutputCanvas(x: number, y: number, fillR: number, fillG: number, fillB: number, fillA: number = 255): BitmapData {
 
+
     let outputCanvas: BitmapData = new BitmapData(this.width, this.height, 'rgba(0,0,0,0)');
     let outputDatas: Uint8ClampedArray = outputCanvas.pixelData;
-
+    console.log("FF ", outputCanvas.width, outputCanvas.htmlCanvas.width)
     let data: Uint8ClampedArray = this.pixelData;
 
     var borderLen: number = 0;
@@ -576,6 +577,7 @@ export class BitmapData extends EventDispatcher {
     var w = maxX - minX;
     var h = maxY - minY;
 
+    if (w == 0 || h == 0) return this;
     BitmapData.abstractCanvas.width = w;
     BitmapData.abstractCanvas.height = h;
 

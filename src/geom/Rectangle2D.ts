@@ -28,6 +28,13 @@ export class Rectangle2D {
     if (r.minY < this.minY) this.minY = r.minY;
   }
 
+  public addPoint(pt: { x: number, y: number }) {
+    if (pt.x > this.maxX) this.maxX = pt.x;
+    if (pt.y > this.maxY) this.maxY = pt.y;
+    if (pt.x < this.minX) this.minX = pt.x;
+    if (pt.y < this.minY) this.minY = pt.y;
+  }
+
   public get x(): number { return this.minX }
   public set x(n: number) { this.minX = n; }
 
