@@ -23,6 +23,7 @@ export declare class Path extends RegisterableObject {
         h: number;
     };
     constructor(pathData?: number[]);
+    clone(): Path;
     get dataString(): string;
     static fromDataString(data: string): Path;
     newPath(): Path2D;

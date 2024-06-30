@@ -31,11 +31,12 @@ export declare class RenderStack extends RegisterableObject {
     offsetH: number;
     mouse: MouseControler;
     constructor(elements?: (Path | TextPath | FillStroke | Shape)[]);
+    filter(condition: (val: any) => boolean): any;
     get dataString(): string;
     static fromDataString(data: string): RenderStack;
     get elements(): RenderStackElement[];
     clone(): RenderStack;
-    push(renderStackElement: Path | TextPath | FillStroke | Shape, mouseEnabled?: boolean): RenderStackElement;
+    push(renderStackElement: Path | TextPath | FillStroke | Shape | RenderStack, mouseEnabled?: boolean): RenderStackElement | RenderStack;
     updateWithHitTest(context: CanvasRenderingContext2D, target: Display2D, mouseX?: number, mouseY?: number, updateFromShape?: boolean): boolean;
     update(context: CanvasRenderingContext2D, target: Display2D, updateFromShape?: boolean): boolean;
     updateBounds(target: Display2D): Rectangle2D;

@@ -6,6 +6,7 @@ import { Solid } from '../Solid';
 
 export declare class SolidStroke extends Solid {
     constructor(r?: number | SolidColor | string, g?: number | LineStyle, b?: number, a?: number, lineStyle?: LineStyle);
+    clone(): SolidStroke;
     get dataString(): string;
     static fromDataString(data: string): SolidStroke;
     apply(context: CanvasRenderingContext2D, path: Path, target: Display2D): void;

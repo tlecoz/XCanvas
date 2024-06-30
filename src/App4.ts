@@ -107,7 +107,7 @@ export class App4 {
         compositeObject.stack(CirclePath.instance);
         compositeObject.stack(fill);
         compositeObject.stack(gradientStroke);
-        const textElement: RenderStackElement = compositeObject.stack(new TextPath("Hello Canvas !"));
+        const textElement: RenderStackElement = compositeObject.stack(new TextPath("Hello Canvas !")) as RenderStackElement;
         compositeObject.stack(solidTextStroke);
         compositeObject.stack(shape);
         compositeObject.align(Align.CENTER);

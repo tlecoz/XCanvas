@@ -6,6 +6,7 @@ import { Pattern } from '../Pattern';
 
 export declare class PatternStroke extends Pattern {
     constructor(source: BitmapData, crop?: boolean, applyTargetScale?: boolean, lineStyle?: LineStyle);
+    clone(): PatternStroke;
     get dataString(): string;
     static fromDataString(data: string): PatternStroke;
     apply(context: CanvasRenderingContext2D, path: Path, target: Display2D): void;

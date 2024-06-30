@@ -1,5 +1,8 @@
 // src/index.ts
 
+
+
+
 // Bitmap
 export { BitmapData } from './bitmap/BitmapData';
 export { BitmapPixel } from './bitmap/BitmapPixel';
@@ -62,6 +65,14 @@ export { Geometry } from './graphics/Geometry';
 export { Path } from './graphics/Path';
 export { CirclePath } from './graphics/primitives/CirclePath';
 export { SquarePath } from './graphics/primitives/SquarePath';
+
+export { PathCommands } from './graphics/pathCommands/PathCommands';
+export { ArcToCommand } from './graphics/pathCommands/ArcToCommand';
+export { BezierCurveToCommand } from './graphics/pathCommands/BezierCurveToCommand';
+export { LineToCommand } from './graphics/pathCommands/LineToCommand';
+export { MoveToCommand } from './graphics/pathCommands/MoveToCommand';
+export { QuadraticCurveToCommand } from './graphics/pathCommands/QuadraticCurveToCommand';
+export { InteractivePath } from './graphics/InteractivePath';
 
 // Media
 export { Img } from './media/Img';

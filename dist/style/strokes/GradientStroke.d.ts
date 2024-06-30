@@ -6,6 +6,7 @@ import { LineStyle } from '../LineStyle';
 
 export declare class GradientStroke extends Gradient {
     constructor(gradient: GradientColor, isLinear?: boolean, lineStyle?: LineStyle);
+    clone(): GradientStroke;
     get dataString(): string;
     static fromDataString(data: string): GradientStroke;
     apply(context: CanvasRenderingContext2D, path: Path, target: Display2D): void;

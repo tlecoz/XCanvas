@@ -157,7 +157,7 @@ export class BitmapPath extends Path {
     }
 
     this.computePath();
-
+    console.log(this.datas)
 
   }
 

@@ -9,6 +9,7 @@ export declare class Shape extends RegisterableObject {
     h: number;
     private renderStack;
     constructor(x: number, y: number, w: number, h: number, renderStack: RenderStack);
+    clone(): Shape;
     get dataString(): string;
     static fromDataString(data: string): Shape;
     apply(context: CanvasRenderingContext2D, target: Display2D, mouseX?: number, mouseY?: number): boolean;

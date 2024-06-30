@@ -6,6 +6,10 @@ export declare class Rectangle2D {
     constructor(minX?: number, minY?: number, maxX?: number, maxY?: number);
     init(minX?: number, minY?: number, maxX?: number, maxY?: number): Rectangle2D;
     add(r: Rectangle2D): void;
+    addPoint(pt: {
+        x: number;
+        y: number;
+    }): void;
     get x(): number;
     set x(n: number);
     get y(): number;

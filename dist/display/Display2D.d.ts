@@ -41,6 +41,7 @@ export declare class Display2D extends Matrix2D {
     protected boundFrameId: number;
     protected waitingBound: boolean;
     constructor(w: number, h: number, renderStack?: RenderStack);
+    get(condition: (val: any) => boolean, clone?: boolean): any[];
     get dataString(): string;
     static fromDataString(data: string, target?: Display2D): Display2D;
     get fillStrokeDrawable(): boolean;
@@ -50,7 +51,7 @@ export declare class Display2D extends Matrix2D {
     get stage(): Stage2D | null;
     align(displayAlign?: Pt2D): void;
     updateBounds(): Rectangle2D;
-    stack(renderStackElement: RenderStackable): RenderStackElement;
+    stack(renderStackElement: RenderStackable | RenderStack): RenderStackElement | RenderStack;
     get cacheAsBitmap(): boolean;
     set cacheAsBitmap(b: boolean);
     get bitmapCache(): BitmapCache;

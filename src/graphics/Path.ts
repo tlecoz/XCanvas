@@ -1,5 +1,8 @@
+import { Display2D } from "../display/Display2D";
 import { RegisterableObject } from "../utils/RegisterableObject";
 import { Geometry } from "./Geometry";
+import { InteractivePath } from "./InteractivePath";
+import { PathCommands } from "./pathCommands/PathCommands";
 
 export class Path extends RegisterableObject {
 
@@ -27,6 +30,22 @@ export class Path extends RegisterableObject {
   protected datas: number[]
   protected bounds: { x: number, y: number, w: number, h: number } = { x: 0, y: 0, w: 0, h: 0 };
 
+  protected _interactivePath: InteractivePath = null;
+
+  public getInteractivePath(target: Display2D): InteractivePath {
+    /*
+    width and height are used if we draw the path dynamicly 
+    => we must renormalize the path during the draw
+    */
+    console.log(this.pathDatas)
+    if (!this._interactivePath) this._interactivePath = new InteractivePath(this.pathDatas, target)
+    else {
+      this._interactivePath.axis = target.axis;
+      this._interactivePath.width = target.height;
+      this._interactivePath.height = target.width;
+    }
+    return this._interactivePath;
+  }
 
 
   constructor(pathData: number[] = null) {
@@ -78,20 +97,20 @@ export class Path extends RegisterableObject {
   public get originalX(): number { return this._originalX; }
   public get originalY(): number { return this._originalY; }
 
-  public moveTo(x: number, y: number): void { this.datas.push(0, x, y); }//0
-  public lineTo(x: number, y: number): void { this.datas.push(1, x, y); }//1
+  public moveTo(x: number, y: number): void { this.datas.push(PathCommands.MOVE_TO, x, y); }//0
+  public lineTo(x: number, y: number): void { this.datas.push(PathCommands.LINE_TO, x, y); }//1
   public circle(x: number, y: number, radius: number): void {
     //console.log(x,y,radius);
     this.arc(x, y, radius)
   }//2
-  public quadraticCurveTo(ax: number, ay: number, x: number, y: number): void { this.datas.push(3, ax, ay, x, y); }//3
-  public rect(x: number, y: number, w: number, h: number): void { this.datas.push(4, x, y, w, h); }//4
+  public quadraticCurveTo(ax: number, ay: number, x: number, y: number): void { this.datas.push(PathCommands.QUADRATIC_CURVE_TO, ax, ay, x, y); }//3
+  public rect(x: number, y: number, w: number, h: number): void { this.datas.push(PathCommands.RECT, x, y, w, h); }//4
   public arc(x: number, y: number, radius: number, startAngle: number = 0, endAngle: number = Math.PI * 2): void {
     //console.log(5,x,y,radius,startAngle,endAngle)
-    this.datas.push(5, x, y, radius, startAngle, endAngle);
+    this.datas.push(PathCommands.ARC, x, y, radius, startAngle, endAngle);
   }//5
-  public arcTo(x0: number, y0: number, x1: number, y1: number, radius: number): void { this.datas.push(6, x0, y0, x1, y1, radius); }//6
-  public bezierCurveTo(ax0: number, ay0: number, ax1: number, ay1: number, x1: number, y1: number): void { this.datas.push(7, ax0, ay0, ax1, ay1, x1, y1); }//7
+  public arcTo(x0: number, y0: number, x1: number, y1: number, radius: number): void { this.datas.push(PathCommands.ARC_TO, x0, y0, x1, y1, radius); }//6
+  public bezierCurveTo(ax0: number, ay0: number, ax1: number, ay1: number, x1: number, y1: number): void { this.datas.push(PathCommands.BEZIER_CURVE_TO, ax0, ay0, ax1, ay1, x1, y1); }//7
 
   private static moveTo(path: Path2D, datas: number[], i: number): void {
     path.moveTo(datas[i + 1], datas[i + 2]);

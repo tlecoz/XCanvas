@@ -172,7 +172,6 @@ export class RenderStack extends RegisterableObject {
 
           if (o.isPath || o.isTextPath) path = o.value as Path | TextPath
           else {
-
             (o.value as any).apply(context, path, target);
             if (!hitTest && o.mouseEnabled && target.useComplexHitTest) hitTest = path.isPointInside(context, mouseX, mouseY, o.isStroke);
           }

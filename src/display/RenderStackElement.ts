@@ -77,6 +77,7 @@ export class RenderStackElement extends RegisterableObject {
 
     this.isPath = this.value instanceof Path;
     this.isTextPath = this.value instanceof TextPath;
+
     if (this.isPath || this.isTextPath) return;
 
 

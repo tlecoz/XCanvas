@@ -229,6 +229,8 @@ export class Geometry {
     this.registerPoint(x, y + h);
   }
 
+
+
   public getQuadraticCurveLength(ax: number, ay: number, x1: number, y1: number) {
     var x0: number = this.oldX;
     var y0: number = this.oldY;

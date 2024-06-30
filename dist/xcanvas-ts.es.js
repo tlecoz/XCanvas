@@ -236,6 +236,12 @@ class Rectangle2D {
     if (r.minX < this.minX) this.minX = r.minX;
     if (r.minY < this.minY) this.minY = r.minY;
   }
+  addPoint(pt) {
+    if (pt.x > this.maxX) this.maxX = pt.x;
+    if (pt.y > this.maxY) this.maxY = pt.y;
+    if (pt.x < this.minX) this.minX = pt.x;
+    if (pt.y < this.minY) this.minY = pt.y;
+  }
   get x() {
     return this.minX;
   }
@@ -698,6 +704,7 @@ const _BitmapData = class _BitmapData extends EventDispatcher {
   floodFillRGBAandReturnOutputCanvas(x, y, fillR, fillG, fillB, fillA = 255) {
     let outputCanvas = new _BitmapData(this.width, this.height, "rgba(0,0,0,0)");
     let outputDatas = outputCanvas.pixelData;
+    console.log("FF ", outputCanvas.width, outputCanvas.htmlCanvas.width);
     let data = this.pixelData;
     var borderLen = 0;
     var borders = [];
@@ -820,6 +827,7 @@ const _BitmapData = class _BitmapData extends EventDispatcher {
     outputCanvas.applyImageData();
     var w = maxX - minX;
     var h = maxY - minY;
+    if (w == 0 || h == 0) return this;
     _BitmapData.abstractCanvas.width = w;
     _BitmapData.abstractCanvas.height = h;
     _BitmapData.abstractContext.drawImage(outputCanvas.htmlCanvas, -minX, -minY);
@@ -1249,7 +1257,7 @@ const _Geometry = class _Geometry {
       if (ty > maxY) maxY = ty;
       p = p.next;
     }
-    return target.bounds.init(minX - ox, minY - oy, maxX + ox, maxY + oy);
+    return new Rectangle2D(minX - ox, minY - oy, maxX + ox, maxY + oy);
   }
   getPoints(pathDatas) {
     this._boundPoints = [];
@@ -3698,6 +3706,9 @@ class FillStroke extends RegisterableObject {
     __publicField(this, "cacheDirty", false);
     __publicField(this, "cache", null);
   }
+  clone() {
+    return { ...this };
+  }
   //@ts-ignore
   apply(context, path, target) {
     if (target.fillStrokeDrawable) context.globalAlpha = this.alpha * target.globalAlpha;
@@ -4013,6 +4024,9 @@ const _Path = class _Path extends RegisterableObject {
       this.computePath();
     }
   }
+  clone() {
+    return new _Path(this.datas);
+  }
   get dataString() {
     return this.datas.join(",");
   }
@@ -4137,10 +4151,13 @@ const _Path = class _Path extends RegisterableObject {
       if (useRadius) nb--;
       for (j = start; j < nb; j++) {
         val = datas[j];
-        if (val < minX) minX = val;
-        if (val < minY) minY = val;
-        if (val > maxX) maxX = val;
-        if (val > maxY) maxY = val;
+        if (j % 2 == 0) {
+          if (val < minY) minY = val;
+          if (val > maxY) maxY = val;
+        } else {
+          if (val < minX) minX = val;
+          if (val > maxX) maxX = val;
+        }
       }
       if (useRadius) {
         val = datas[nb];
@@ -4171,11 +4188,11 @@ const _Path = class _Path extends RegisterableObject {
       for (j = start; j < nb; j++) {
         val = datas[j];
         if (j % 2 == 0) {
-          val -= minX;
-          val /= dx;
-        } else {
           val -= minY;
           val /= dy;
+        } else {
+          val -= minX;
+          val /= dx;
         }
         datas[j] = val;
       }
@@ -4212,6 +4229,9 @@ class TextPath extends RegisterableObject {
   static fromDataString(data) {
     return new TextPath(data);
   }
+  clone() {
+    return new TextPath(this.text);
+  }
   //@ts-ignore
   isPointInside(context, px, py, isStroke, fillrule = "nonzero") {
     return false;
@@ -4232,6 +4252,9 @@ class BitmapCacheFill extends FillStroke {
     __publicField(this, "bd");
     this.bd = bd;
     this.styleType = "fillStyle";
+  }
+  clone() {
+    return new BitmapCacheFill(this.bd.clone());
   }
   get width() {
     return this.bd.width;
@@ -4267,7 +4290,7 @@ class BitmapFill extends FillStroke {
     var t = data.split(",");
     return new BitmapFill(ObjectLibrary.instance.getObjectByRegisterId(t[0]), t[1] == "1");
   }
-  clone(cloneMedia = false, cloneLineStyle = true) {
+  clone(cloneMedia = true, cloneLineStyle = true) {
     var o;
     if (cloneMedia) o = new BitmapFill(this.bd.clone());
     else o = new BitmapFill(this.bd);
@@ -4287,7 +4310,6 @@ class BitmapFill extends FillStroke {
     context.save();
     context.clip(path.path);
     context.scale(target.inverseW * this.scaleX, target.inverseH * this.scaleY);
-    context.translate(target.xAxis, target.yAxis);
     context.rotate(this.rotation);
     if (this.centerInto) context.translate((target.width - bd.width) * 0.5, (target.height - bd.height) * 0.5);
     context.translate(this.x, this.y);
@@ -4433,6 +4455,9 @@ class GradientFill extends Gradient {
   constructor(gradient) {
     super(gradient);
     this.styleType = "fillStyle";
+  }
+  clone() {
+    return new GradientFill(this.gradient.clone(true));
   }
   get dataString() {
     return this.gradient.REGISTER_ID;
@@ -4867,6 +4892,9 @@ class PatternFill extends Pattern {
     super(source, crop, applyTargetScale);
     this.styleType = "fillStyle";
   }
+  clone() {
+    return new PatternFill(this.bitmapData.clone(), this.crop, this.applyTargetScale);
+  }
   get dataString() {
     var crop = 0;
     var targetScale = 0;
@@ -4918,6 +4946,9 @@ class SolidFill extends Solid {
   constructor(r = "#000000", g = null, b = null, a = null) {
     super(r, g, b, a);
     this.styleType = "fillStyle";
+  }
+  clone() {
+    return new SolidFill(this.color.clone());
   }
   get dataString() {
     return this.color.REGISTER_ID;
@@ -4998,6 +5029,9 @@ class GradientStroke extends Gradient {
     this.styleType = "strokeStyle";
     this.lineStyle = lineStyle ? lineStyle : new LineStyle(2);
   }
+  clone() {
+    return new GradientStroke(this.gradient.clone(true), this.isLinear, this.lineStyle.clone());
+  }
   get dataString() {
     var linear = 0;
     if (this.isLinear) linear = 1;
@@ -5019,6 +5053,9 @@ class PatternStroke extends Pattern {
     super(source, crop, applyTargetScale);
     this.styleType = "strokeStyle";
     this.lineStyle = lineStyle ? lineStyle : new LineStyle(2);
+  }
+  clone() {
+    return new PatternStroke(this.bitmapData.clone(), this.crop, this.applyTargetScale, this.lineStyle.clone());
   }
   get dataString() {
     var crop = 0;
@@ -5048,6 +5085,9 @@ class SolidStroke extends Solid {
     if (!lineStyle) this.lineStyle = new LineStyle(2);
     else this.lineStyle = lineStyle;
   }
+  clone() {
+    return new SolidStroke(this.color.clone());
+  }
   get dataString() {
     return this.color.REGISTER_ID + "," + (this.lineStyle ? this.lineStyle.REGISTER_ID : "null");
   }
@@ -5066,6 +5106,9 @@ class GradientTextFill extends Gradient {
     super(gradient, isLinear);
     this.styleType = "fillStyle";
     this.textStyle = textStyle;
+  }
+  clone() {
+    return new GradientTextFill(this.textStyle.clone(true), this.gradient.clone(true), this.isLinear);
   }
   get dataString() {
     var linear = 0;
@@ -5087,6 +5130,9 @@ class PatternTextFill extends Pattern {
     super(bd, crop, applyTargetScale);
     this.styleType = "fillStyle";
     this.textStyle = textStyle;
+  }
+  clone() {
+    return new PatternTextFill(this.textStyle.clone(), this.bitmapData.clone(), this.crop, this.applyTargetScale);
   }
   get dataString() {
     var crop = 0;
@@ -5111,6 +5157,9 @@ class SolidTextFill extends Solid {
     this.styleType = "fillStyle";
     this.textStyle = textStyle;
   }
+  clone() {
+    return new SolidTextFill(this.textStyle.clone(true), this.color.clone());
+  }
   get dataString() {
     return this.textStyle.REGISTER_ID + "," + this.color.REGISTER_ID;
   }
@@ -5129,6 +5178,9 @@ class GradientTextStroke extends Gradient {
     super(gradient, isLinear);
     this.styleType = "strokeStyle";
     this.textStyle = textStyle;
+  }
+  clone() {
+    return new GradientTextStroke(this.textStyle.clone(true), this.gradient.clone(true), this.isLinear);
   }
   get dataString() {
     var linear = 0;
@@ -5150,6 +5202,9 @@ class PatternTextStroke extends Pattern {
     super(bd, centerInto, applyTargetScale);
     this.styleType = "strokeStyle";
     this.textStyle = textStyle;
+  }
+  clone() {
+    return new PatternTextStroke(this.textStyle.clone(true), this.bitmapData.clone(), this.centerInto, this.applyTargetScale);
   }
   get dataString() {
     var crop = 0;
@@ -5173,6 +5228,9 @@ class SolidTextStroke extends Solid {
     super(r, g, b, a);
     this.styleType = "strokeStyle";
     this.textStyle = textStyle;
+  }
+  clone() {
+    return new SolidTextStroke(this.textStyle.clone(true), this.color.clone());
   }
   get dataString() {
     console.log("SolidTextStroke get dataString textStyle = ", this.textStyle);
@@ -5204,6 +5262,9 @@ class Shape extends RegisterableObject {
     this.w = w;
     this.h = h;
     this.renderStack = renderStack;
+  }
+  clone() {
+    return new Shape(this.x, this.y, this.w, this.h, this.renderStack.clone());
   }
   get dataString() {
     return [this.x, this.y, this.w, this.h, this.renderStack.REGISTER_ID].join(",");
@@ -5278,7 +5339,7 @@ class RenderStackElement extends RegisterableObject {
     return r;
   }
   clone() {
-    var o = new RenderStackElement(this.value, this.mouseEnabled);
+    var o = new RenderStackElement(this.value.clone(), this.mouseEnabled);
     o.init(this.lastPath, this.lastFillStroke);
     return o;
   }
@@ -5300,6 +5361,16 @@ class RenderStack extends RegisterableObject {
     if (elements) elements.forEach((e) => {
       this.push(e);
     });
+  }
+  filter(condition) {
+    const res = this.elements.filter(condition);
+    const result = [];
+    if (res.length) {
+      res.forEach((val, id) => {
+        result[id] = val.value;
+      });
+    }
+    return result;
   }
   get dataString() {
     var s = "";
@@ -5343,12 +5414,19 @@ class RenderStack extends RegisterableObject {
   //et de cloner un élément dans le tableau sans affecter tout le to
   //#################
   push(renderStackElement, mouseEnabled = true) {
-    var o = new RenderStackElement(renderStackElement, mouseEnabled);
-    this._elements.push(o);
-    if (renderStackElement instanceof Path || renderStackElement instanceof TextPath) this.lastPath = renderStackElement;
-    else if (renderStackElement instanceof FillStroke) this.lastFillStroke = renderStackElement;
-    o.init(this.lastPath, this.lastFillStroke);
-    return o;
+    if (renderStackElement instanceof RenderStack) {
+      renderStackElement.elements.forEach((val) => {
+        this.elements.push(val);
+      });
+      return renderStackElement;
+    } else {
+      var o = new RenderStackElement(renderStackElement, mouseEnabled);
+      this._elements.push(o);
+      if (renderStackElement instanceof Path || renderStackElement instanceof TextPath) this.lastPath = renderStackElement;
+      else if (renderStackElement instanceof FillStroke) this.lastFillStroke = renderStackElement;
+      o.init(this.lastPath, this.lastFillStroke);
+      return o;
+    }
   }
   updateWithHitTest(context, target, mouseX = Number.MAX_VALUE, mouseY = Number.MAX_VALUE, updateFromShape = false) {
     let o;
@@ -5481,7 +5559,6 @@ class RenderStack extends RegisterableObject {
     }
     if (!path || !path.geometry) return void 0;
     var r = path.geometry.getBounds(target, (offsetW + lineW) * Math.sqrt(2), (offsetH + lineW) * Math.sqrt(2));
-    console.log("r = ", r);
     this.offsetW = lineW + offsetW * (Math.sqrt(2) + 1);
     this.offsetH = lineW + offsetH * (Math.sqrt(2) + 1);
     return r;
@@ -5541,6 +5618,16 @@ const _Display2D = class _Display2D extends Matrix2D {
     else this.renderStack = renderStack;
     this._bounds = new Rectangle2D(0, 0, w, h);
     this.cache = new BitmapCache(this);
+  }
+  get(condition, clone = true) {
+    if (clone) {
+      this.renderStack = this.renderStack.clone();
+      const t = this.renderStack.elements.filter(condition);
+      const res = [];
+      t.forEach((v, id) => res[id] = v.value);
+      return res;
+    }
+    return this.renderStack.elements.filter(condition);
   }
   get dataString() {
     var datas = super.dataString;
@@ -5614,14 +5701,12 @@ const _Display2D = class _Display2D extends Matrix2D {
       return;
     }
     if (bool) {
-      console.log(b.width * this.axis.x, b.height * this.axis.y);
       const bw = b.width;
       const bh = b.height;
       b.minX -= this.axis.x * bw;
       b.minY -= this.axis.y * bh;
       b.maxX -= this.axis.x * bw;
       b.maxY -= this.axis.y * bh;
-      console.log(b);
     }
     return b;
   }
@@ -5712,7 +5797,6 @@ const _Group2D = class _Group2D extends Display2D {
     this._children = [];
     this.axis = Align.TOP_LEFT.clone();
     const onChildListChange = () => {
-      console.log("onChildListChange ", this, !!this.stage);
       if (!this.stage || this.stage.frameId == 0 || !this.axis) this.waitingBound = true;
       else this.updateBounds();
     };
@@ -6377,14 +6461,21 @@ class BitmapPath extends Path {
     __publicField(this, "_holeVector", null);
     __publicField(this, "_outsideCurves", null);
     __publicField(this, "_holeCurves", null);
+    __publicField(this, "_bitmapBounds", new Rectangle2D());
     __publicField(this, "bd");
     __publicField(this, "precision");
     __publicField(this, "curveSmooth");
-    this.bd = bd;
+    this.bd = bd.clone();
     this.precision = percentOfTheOriginal;
     this.curveSmooth = curveSmooth;
     this.updateBitmapBorders();
     this.generatePath();
+  }
+  updateBitmapBounds() {
+    this._bitmapBounds.init();
+    this._outsideBitmap.forEach((pt) => this._bitmapBounds.addPoint(pt));
+    this._bitmapBounds.minX = (this.bd.width - this._bitmapBounds.width) * 0.5;
+    this._bitmapBounds.minY = (this.bd.height - this._bitmapBounds.height) * 0.5;
   }
   updateBitmapBorders() {
     this.bd.saveData();
@@ -6395,6 +6486,7 @@ class BitmapPath extends Path {
     this.bd.restoreData();
     this.vectorize(this.precision);
     if (this.curveSmooth != 0) this.convertLinesToCurves(this.curveSmooth);
+    this.updateBitmapBounds();
   }
   vectorize(percentOfTheOriginal = 0.055) {
     if (!this._outsideBitmap || !this._holeBitmap) return;
@@ -6488,6 +6580,9 @@ class BitmapPath extends Path {
         bezier[3][1]
       );
     }
+  }
+  get bitmapBounds() {
+    return this._bitmapBounds;
   }
   get outsideBitmap() {
     return this._outsideBitmap;

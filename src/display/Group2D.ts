@@ -96,6 +96,7 @@ export class Group2D extends Display2D {
       return this._bounds;
     }
 
+
     for (let i = 0; i < this.children.length; i++) {
       if (!this.children[i].axis) {
         this.waitingBound = true;
@@ -106,7 +107,9 @@ export class Group2D extends Display2D {
 
 
 
-    //console.log("frameId = ", frameId, this.boundFrameId)
+
+
+
 
 
     this.boundFrameId = frameId;

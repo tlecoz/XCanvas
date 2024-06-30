@@ -6,6 +6,7 @@ import { TextPath } from '../TextPath';
 
 export declare class SolidTextFill extends Solid {
     constructor(textStyle: TextStyle, r?: number | SolidColor | string, g?: number, b?: number, a?: number);
+    clone(): SolidTextFill;
     get dataString(): string;
     static fromDataString(data: string): SolidTextFill;
     apply(context: CanvasRenderingContext2D, path: TextPath, target: Display2D): void;

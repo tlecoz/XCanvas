@@ -25,6 +25,7 @@ export declare class FillStroke extends RegisterableObject {
     protected cacheDirty: boolean;
     protected cache: BitmapData;
     constructor();
+    clone(): FillStroke;
     apply(context: CanvasRenderingContext2D, path: Fillable, target: Display2D): void;
     get cacheAsBitmap(): boolean;
     set cacheAsBitmap(b: boolean);
