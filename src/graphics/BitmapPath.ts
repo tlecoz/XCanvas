@@ -30,7 +30,7 @@ export class BitmapPath extends Path {
     this.curveSmooth = curveSmooth;
     this.updateBitmapBorders();
     this.generatePath();
-
+    console.log(this)
   }
 
   protected updateBitmapBounds(): void {
@@ -175,11 +175,11 @@ export class BitmapPath extends Path {
     let bezier: number[][];
     for (i = 0; i < len; i++) {
       bezier = path[i];
+
       if (i == 0) this.moveTo(bezier[0][0], bezier[0][1])
       this.bezierCurveTo(bezier[1][0], bezier[1][1],
         bezier[2][0], bezier[2][1],
         bezier[3][0], bezier[3][1]);
-
 
     }
 
